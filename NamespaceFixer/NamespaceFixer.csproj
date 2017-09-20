@@ -54,9 +54,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="InnerPathFinder\IInnerPathFinder.cs" />
+    <Compile Include="InnerPathFinder\InnerPathFinderService.cs" />
+    <Compile Include="Extensions\PathExtensions.cs" />
     <Compile Include="NamespaceAdjuster.cs" />
+    <Compile Include="INamespaceAdjusterOptions.cs" />
     <Compile Include="NamespaceAdjusterPackage.cs" />
+    <Compile Include="NamespaceBuilder\INamespaceBuilder.cs" />
+    <Compile Include="NamespaceBuilder\NamespaceBuilderService.cs" />
+    <Compile Include="OptionPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SolutionSelection\ISolutionSelectionService.cs" />
+    <Compile Include="SolutionSelection\SolutionSelectionService.cs" />
     <Compile Include="Statics.cs" />
   </ItemGroup>
   <ItemGroup>

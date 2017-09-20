@@ -1,4 +1,7 @@
 ﻿using Microsoft.VisualStudio.Shell;
+using NamespaceFixer.InnerPathFinder;
+using NamespaceFixer.NamespaceBuilder;
+using NamespaceFixer.SolutionSelection;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -27,6 +30,8 @@ namespace NamespaceFixer
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(Guids.NamespaceFixerPackage)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
+    [ProvideOptionPage(typeof(OptionPage),
+        "Namespace Fixer options", "Use default project namespace", 0, 0, true)]
     public sealed class NamespaceAdjusterPackage : Package
     {
         /// <summary>
@@ -35,7 +40,11 @@ namespace NamespaceFixer
         /// </summary>
         protected override void Initialize()
         {
-            NamespaceAdjuster.Initialize(this);
+            var options = (OptionPage)GetDialogPage(typeof(OptionPage));
+            var solutionSelection = new SolutionSelectionService();
+            var innerPathFinder = new InnerPathFinderService();
+            var namespaceBuilder = new NamespaceBuilderService(options);
+            NamespaceAdjuster.Initialize(this, solutionSelection, innerPathFinder, namespaceBuilder, options);
             base.Initialize();
         }
     }

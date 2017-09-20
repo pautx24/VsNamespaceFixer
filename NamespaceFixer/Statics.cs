@@ -2,6 +2,11 @@
 
 namespace NamespaceFixer
 {
+    internal static class Statics
+    {
+        public const string ProjectFileExtension = "csproj";
+    }
+
     internal static class Guids
     {
         public static readonly Guid NamespaceFixerCmdSet = new Guid("{19492BCB-32B3-4EC3-8826-D67CD5526653}");
