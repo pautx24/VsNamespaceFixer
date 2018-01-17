@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.Shell;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.VisualStudio.Shell;
 using NamespaceFixer.InnerPathFinder;
 using NamespaceFixer.NamespaceBuilder;
 using NamespaceFixer.SolutionSelection;
@@ -39,7 +40,7 @@ namespace NamespaceFixer
         public static void Initialize(
             Package package,
             ISolutionSelectionService solutionSelectionService,
-            IInnerPathFinder innerPathFinder, 
+            IInnerPathFinder innerPathFinder,
             INamespaceBuilder namespaceBuilder,
             INamespaceAdjusterOptions options)
         {
@@ -82,7 +83,6 @@ namespace NamespaceFixer
             }
 
             var basePath = GetSolutionPath(allPaths[0]);
-
             allPaths.ToList().ForEach(f => FixNamespace(f, basePath));
         }
 

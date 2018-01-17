@@ -49,7 +49,12 @@ namespace NamespaceFixer.NamespaceBuilder
                 namespaceStart = directory.Name;
             }
 
-            return AppendNamespace(idealNamespace, namespaceStart);
+            return TuneNamespace(AppendNamespace(idealNamespace, namespaceStart));
+        }
+
+        private string TuneNamespace(string name)
+        {
+            return name.Replace('-', '_');
         }
 
         private string AppendNamespace(string existingNamespace, string startNamespace)
