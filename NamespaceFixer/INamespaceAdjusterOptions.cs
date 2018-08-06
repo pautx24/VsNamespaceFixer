@@ -2,6 +2,6 @@
 {
     internal interface INamespaceAdjusterOptions
     {
-        bool UseProjectDefaultNamespace { get; }
+         string NamespaceFormat { get; }
     }
 }

@@ -6,6 +6,7 @@ using NamespaceFixer.SolutionSelection;
 using System;
 using System.ComponentModel.Design;
 using System.IO;
+using System.IO.Extensions;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -82,8 +83,19 @@ namespace NamespaceFixer
                 return;
             }
 
-            var basePath = GetSolutionPath(allPaths[0]);
-            allPaths.ToList().ForEach(f => FixNamespace(f, basePath));
+            var projectFile = GetProjectFilePath(allPaths[0]);
+            var solutionFile = GetSolutionFilePath(projectFile.Directory.FullName);
+            allPaths.ToList().ForEach(f => FixNamespace(f, solutionFile, projectFile));
+        }
+
+        private FileInfo GetProjectFilePath(string filePath)
+        {
+            var directory = Directory.GetParent(filePath);
+            FileInfo file;
+
+            while (!TryGetProjectFile(directory, out file)) { directory = directory.Parent; }
+
+            return file;
         }
 
         private string BuildNamespaceLine(string desiredNamespace)
@@ -91,7 +103,7 @@ namespace NamespaceFixer
             return "namespace " + desiredNamespace;
         }
 
-        private void FixNamespace(string filePath, string basePath)
+        private void FixNamespace(string filePath, FileInfo solutionFile, FileInfo projectFile)
         {
             if (!File.Exists(filePath))
             {
@@ -99,7 +111,8 @@ namespace NamespaceFixer
             }
 
             var fileContent = File.ReadAllText(filePath);
-            var desiredNamespace = _namespaceBuilder.GetIdealNamespace(filePath, basePath);
+
+            var desiredNamespace = _namespaceBuilder.GetNamespace(filePath, solutionFile, projectFile);
 
             var updated = UpdateFile(ref fileContent, desiredNamespace);
 
@@ -109,18 +122,39 @@ namespace NamespaceFixer
             }
         }
 
-        private string GetSolutionPath(string path)
+        private FileInfo GetSolutionFilePath(string projectFilePath)
         {
-            var directory = Directory.GetParent(path);
+            var directory = new DirectoryInfo(projectFilePath);
+            FileInfo solutionFile;
 
-            while (!IsSolutionContainerDirectory(directory)) { directory = directory.Parent; }
+            while (!TryGetSolutionFile(directory, out solutionFile)) { directory = directory.Parent; }
 
-            return directory.FullName;
+            return solutionFile;
         }
 
-        private bool IsSolutionContainerDirectory(DirectoryInfo directory)
+        private bool TryGetProjectFile(DirectoryInfo directory, out FileInfo directoryFile)
         {
-            return directory.EnumerateFiles().Any(f => f.Extension == ".sln");
+            AssertIsNotRootDirectory(directory, "project");
+            directoryFile = directory.EnumerateFiles().SingleOrDefault(f => f.Extension == ".csproj");
+
+            return directoryFile != null;
+        }
+
+        private bool TryGetSolutionFile(DirectoryInfo directory, out FileInfo solutionFile)
+        {
+            AssertIsNotRootDirectory(directory, "solution");
+
+            solutionFile = directory.EnumerateFiles().SingleOrDefault(f => f.Extension == ".sln");
+
+            return solutionFile != null;
+        }
+
+        private void AssertIsNotRootDirectory(DirectoryInfo directory, string fileLookingFor)
+        {
+            if (directory.IsRoot())
+            {
+                throw new Exception($"The root has been reached and the {fileLookingFor} has been not found");
+            }
         }
 
         private bool UpdateFile(ref string fileContent, string desiredNamespace)

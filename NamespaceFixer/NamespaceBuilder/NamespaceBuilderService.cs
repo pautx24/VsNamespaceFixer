@@ -1,6 +1,7 @@
 ﻿using NamespaceFixer.Extensions;
 using System;
 using System.IO;
+using System.IO.Extensions;
 using System.Linq;
 using System.Xml;
 
@@ -15,57 +16,76 @@ namespace NamespaceFixer.NamespaceBuilder
             _options = options;
         }
 
-        public string GetIdealNamespace(string filePath, string solutionPath)
+        public string GetNamespace(string filePath, FileInfo solutionFile, FileInfo projectFile)
         {
-            var directory = Directory.GetParent(filePath);
+            var solutionName = solutionFile.NameWithoutExtension();
+            var projectName = projectFile.NameWithoutExtension();
+            var projectRootNamespace = GetRootNamespaceFromProject(projectFile);
+            var projectToSolutionPhisicalPath = GetProjectToSolutionPysicalPath(solutionFile, projectFile);
+            var projectToSolutionVirtualPath = string.Empty; // GetProjectToSolutionVirtualPath(solutionFile, projectFile);
+            var fileToProjectPath = GetFileToProjectPath(projectFile, filePath);
+            
+            return BuildNamespaceAccordingToOptions(
+                solutionName, 
+                projectName, 
+                projectRootNamespace, 
+                projectToSolutionPhisicalPath, 
+                projectToSolutionVirtualPath, 
+                fileToProjectPath);
+        }
 
-            var idealNamespace = string.Empty;
+        private string GetFileToProjectPath(FileInfo projectFile, string filePath)
+        {
+            return Directory.GetParent(filePath).FullName.Substring(projectFile.Directory.FullName.Length);
+        }
 
-            while (true)
+        private string GetProjectToSolutionVirtualPath(FileInfo solutionFile, FileInfo projectFile)
+        {
+            throw new NotImplementedException();
+        }
+
+        private string GetProjectToSolutionPysicalPath(FileInfo solutionFile, FileInfo projectFile)
+        {
+            return projectFile.Directory.FullName.Substring(solutionFile.Directory.FullName.Length + 1);
+        }
+
+        private string BuildNamespaceAccordingToOptions(
+            string solutionName,
+            string projectName,
+            string projectRootNamespace,
+            string projectToSolutionPhisicalPath,
+            string projectToSolutionVirtualPath,
+            string fileToProjectPath)
+        {
+            var newNamespace = _options.NamespaceFormat;
+
+            Action<string, string> replaceWithFormat = (namespaceSection, sectionValue) =>
             {
-                if (IsProjectFolder(directory, solutionPath))
-                {
-                    return BuildFinalNamespace(directory, idealNamespace);
-                }
+                newNamespace = newNamespace.Replace(namespaceSection, "/" + sectionValue);
+            };
+            
+            replaceWithFormat(NamespaceSections.SolutionName, solutionName);
+            replaceWithFormat(NamespaceSections.ProjectName, projectName);
+            replaceWithFormat(NamespaceSections.ProjectRootNamespace, projectRootNamespace);
+            replaceWithFormat(NamespaceSections.ProjectToSolutionPhysicalPath, projectToSolutionPhisicalPath);
+            replaceWithFormat(NamespaceSections.ProjectToSolutionVirtualPath, projectToSolutionVirtualPath);
+            replaceWithFormat(NamespaceSections.FileToProjectPath, fileToProjectPath);
 
-                idealNamespace = AppendNamespace(idealNamespace, directory.Name);
-                directory = directory.Parent;
-            }
+            return ToValidFormat(newNamespace);
         }
 
-        private string BuildFinalNamespace(DirectoryInfo directory, string idealNamespace)
+        private string ToValidFormat(string name)
         {
-            string namespaceStart;
-            if (_options.UseProjectDefaultNamespace)
-            {
-                namespaceStart = GetRootNamespaceFromProject(directory);
-                if (namespaceStart == null)
-                {
-                    throw new Exception("Unable to find RootNamespace from project file");
-                }
-            }
-            else
-            {
-                namespaceStart = directory.Name;
-            }
-
-            return TuneNamespace(AppendNamespace(idealNamespace, namespaceStart));
+            return name
+                .Replace('-', '_')
+                .Replace("\\", "/")
+                .Replace('/', '.')
+                .Replace("..", ".")
+                .Trim('.');
         }
 
-        private string TuneNamespace(string name)
+        private string GetRootNamespaceFromProject(FileInfo projectFile)
         {
-            return name.Replace('-', '_');
-        }
-
-        private string AppendNamespace(string existingNamespace, string startNamespace)
-        {
-            return existingNamespace == string.Empty ? startNamespace : $"{startNamespace}.{existingNamespace}";
-        }
-
-        private string GetRootNamespaceFromProject(DirectoryInfo projectDirectory)
-        {
-            var projectFile = GetProjectFile(projectDirectory);
-
             var reader = BuildXmlProjectFileReader(projectFile);
 
             while (reader.Read())
@@ -78,7 +98,7 @@ namespace NamespaceFixer.NamespaceBuilder
                 }
             }
 
-            return null;
+            return Path.GetFileName(projectFile.FullName);
         }
 
         private XmlReader BuildXmlProjectFileReader(FileInfo projectFile)
@@ -86,23 +106,6 @@ namespace NamespaceFixer.NamespaceBuilder
             XmlReaderSettings settings = new XmlReaderSettings();
             settings.DtdProcessing = DtdProcessing.Parse;
             return XmlReader.Create(projectFile.FullName, settings);
-        }
-
-        private FileInfo GetProjectFile(DirectoryInfo projectDirectory)
-        {
-            var file = projectDirectory.EnumerateFiles().SingleOrDefault(f => f.IsProjectFile());
-
-            if (file == null)
-            {
-                throw new Exception($"Could not find project file on project directory: {projectDirectory}");
-            }
-
-            return file;
-        }
-
-        private bool IsProjectFolder(DirectoryInfo currentPath, string solutionPath)
-        {
-            return currentPath.Parent.FullName == solutionPath;
         }
     }
 }

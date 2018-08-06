@@ -54,6 +54,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Extensions\DirectoryExtensions.cs" />
+    <Compile Include="Extensions\FileExtensions.cs" />
     <Compile Include="InnerPathFinder\IInnerPathFinder.cs" />
     <Compile Include="InnerPathFinder\InnerPathFinderService.cs" />
     <Compile Include="Extensions\PathExtensions.cs" />
@@ -62,6 +64,7 @@
     <Compile Include="NamespaceAdjusterPackage.cs" />
     <Compile Include="NamespaceBuilder\INamespaceBuilder.cs" />
     <Compile Include="NamespaceBuilder\NamespaceBuilderService.cs" />
+    <Compile Include="NamespaceBuilder\NamespaceSections.cs" />
     <Compile Include="OptionPage.cs">
       <SubType>Component</SubType>
     </Compile>
