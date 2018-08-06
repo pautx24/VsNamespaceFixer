@@ -171,7 +171,7 @@ namespace NamespaceFixer
             {
                 if (group is Match match)
                 {
-                    var currentNamespace = match.Value.Split(' ').Last().Trim();
+                    var currentNamespace = match.Value.Trim().Split(' ').Last().Trim();
 
                     if (currentNamespace != desiredNamespace)
                     {
