@@ -1,7 +1,10 @@
 ﻿using NamespaceFixer.Extensions;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Extensions;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace NamespaceFixer.InnerPathFinder
 {
@@ -24,11 +27,33 @@ namespace NamespaceFixer.InnerPathFinder
                 }
                 else
                 {
-                    paths.Add(item);
+                    paths.AddRange(GetItemWithRelatedPaths(item));
                 }
             }
 
             return paths.ToArray();
+        }
+
+        private IEnumerable<string> GetItemWithRelatedPaths(string itemPath)
+        {
+            var paths = HiddenFilesFor(itemPath).ToList();
+            paths.Add(itemPath);
+            return paths;
+        }
+
+        private IEnumerable<string> HiddenFilesFor(string itemPath)
+        {
+            var file = new FileInfo(itemPath);
+            var hiddenFilesRegex = file.NameWithoutExtension() + "\\.\\w+\\.cs" ;
+            var regex = new Regex(hiddenFilesRegex);
+            var extraFiles = Directory.GetParent(itemPath).GetFiles().Where(f => regex.IsMatch(f.Name));
+
+            if (extraFiles.Any())
+            {
+                return extraFiles.Where(f => f.FullName != file.FullName).Select(f => f.FullName);
+            }
+
+            return new List<string>();
         }
 
         private IEnumerable<string> GetPathsForDirectory(string item)
