@@ -5,6 +5,8 @@ using NamespaceFixer.SolutionSelection;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NamespaceFixer
 {
@@ -32,13 +34,9 @@ namespace NamespaceFixer
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     [ProvideOptionPage(typeof(OptionPage),
         "Namespace Fixer options", "Use default project namespace", 0, 0, true)]
-    public sealed class NamespaceAdjusterPackage : Package
+    public sealed class NamespaceAdjusterPackage : AsyncPackage
     {
-        /// <summary>
-        /// Initialization of the package; this method is called right after the package is sited, so this is the place
-        /// where you can put all the initialization code that rely on services provided by VisualStudio.
-        /// </summary>
-        protected override void Initialize()
+        protected override System.Threading.Tasks.Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
             var options = (OptionPage)GetDialogPage(typeof(OptionPage));
             var solutionSelection = new SolutionSelectionService();
@@ -46,6 +44,8 @@ namespace NamespaceFixer
             var namespaceBuilder = new NamespaceBuilderService(options);
             NamespaceAdjuster.Initialize(this, solutionSelection, innerPathFinder, namespaceBuilder, options);
             base.Initialize();
+
+            return base.InitializeAsync(cancellationToken, progress);
         }
     }
 }
