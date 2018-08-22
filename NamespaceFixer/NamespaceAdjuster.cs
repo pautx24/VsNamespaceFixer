@@ -135,7 +135,7 @@ namespace NamespaceFixer
         private bool TryGetProjectFile(DirectoryInfo directory, out FileInfo directoryFile)
         {
             AssertIsNotRootDirectory(directory, "project");
-            directoryFile = directory.EnumerateFiles().SingleOrDefault(f => f.Extension == ".csproj");
+            directoryFile = directory.EnumerateFiles().FirstOrDefault(f => f.Extension == ".csproj");
 
             return directoryFile != null;
         }
@@ -144,7 +144,7 @@ namespace NamespaceFixer
         {
             AssertIsNotRootDirectory(directory, "solution");
 
-            solutionFile = directory.EnumerateFiles().SingleOrDefault(f => f.Extension == ".sln");
+            solutionFile = directory.EnumerateFiles().FirstOrDefault(f => f.Extension == ".sln");
 
             return solutionFile != null;
         }
