@@ -46,6 +46,10 @@ namespace NamespaceFixer.NamespaceBuilder
 
         private string GetProjectToSolutionPysicalPath(FileInfo solutionFile, FileInfo projectFile)
         {
+            var projectAndSolutionFilesAreSameDirectory = projectFile.Directory.FullName.Equals(solutionFile.Directory.FullName);
+            if (projectAndSolutionFilesAreSameDirectory)
+                return string.Empty;
+
             return projectFile.Directory.FullName.Substring(solutionFile.Directory.FullName.Length + 1);
         }
 
