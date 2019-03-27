@@ -81,6 +81,7 @@ namespace NamespaceFixer.NamespaceBuilder
         private string ToValidFormat(string name)
         {
             return name
+                .Replace(' ', '_')
                 .Replace('-', '_')
                 .Replace("\\", "/")
                 .Replace('/', '.')
