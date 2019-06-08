@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace NamespaceFixer.NamespaceBuilder
@@ -34,6 +35,31 @@ namespace NamespaceFixer.NamespaceBuilder
             }
 
             return fileRequiresUpdate;
+        }
+
+        internal override string BuildNamespaceAccordingToOptions(
+          string solutionName,
+          string projectName,
+          string projectRootNamespace,
+          string projectToSolutionPhysicalPath,
+          string projectToSolutionVirtualPath,
+          string fileToProjectPath)
+        {
+            var newNamespace = GetOptions().NamespaceFormat;
+
+            Action<string, string> replaceWithFormat = (namespaceSection, sectionValue) =>
+            {
+                newNamespace = newNamespace.Replace(namespaceSection, "/" + sectionValue);
+            };
+
+            replaceWithFormat(NamespaceSections.SolutionName, solutionName);
+            replaceWithFormat(NamespaceSections.ProjectName, projectName);
+            replaceWithFormat(NamespaceSections.ProjectRootNamespace, projectRootNamespace);
+            replaceWithFormat(NamespaceSections.ProjectToSolutionPhysicalPath, projectToSolutionPhysicalPath);
+            replaceWithFormat(NamespaceSections.ProjectToSolutionVirtualPath, projectToSolutionVirtualPath);
+            replaceWithFormat(NamespaceSections.FileToProjectPath, fileToProjectPath);
+
+            return newNamespace;
         }
 
         private string BuildNamespaceLine(string desiredNamespace)
