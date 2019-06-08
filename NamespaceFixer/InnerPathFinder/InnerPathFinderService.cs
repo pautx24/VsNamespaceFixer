@@ -1,14 +1,12 @@
 ﻿using NamespaceFixer.Extensions;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Extensions;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace NamespaceFixer.InnerPathFinder
 {
-    internal class InnerPathFinderService : IInnerPathFinder
+    internal abstract class InnerPathFinderService : IInnerPathFinder
     {
         public string[] GetAllInnerPaths(string[] selectedItemPaths)
         {
@@ -34,6 +32,8 @@ namespace NamespaceFixer.InnerPathFinder
             return paths.ToArray();
         }
 
+        internal abstract string GetHiddenFilesRegex(FileInfo file);
+
         private IEnumerable<string> GetItemWithRelatedPaths(string itemPath)
         {
             var paths = HiddenFilesFor(itemPath).ToList();
@@ -44,7 +44,7 @@ namespace NamespaceFixer.InnerPathFinder
         private IEnumerable<string> HiddenFilesFor(string itemPath)
         {
             var file = new FileInfo(itemPath);
-            var hiddenFilesRegex = file.NameWithoutExtension() + "\\.\\w+\\.cs" ;
+            var hiddenFilesRegex = GetHiddenFilesRegex(file);
             var regex = new Regex(hiddenFilesRegex);
             var extraFiles = Directory.GetParent(itemPath).GetFiles().Where(f => regex.IsMatch(f.Name));
 

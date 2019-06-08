@@ -5,7 +5,7 @@ namespace NamespaceFixer
     internal static class Statics
     {
         public const string CsProjectFileExtension = "csproj";
-        public const string VbProjectFileExtension1 = "vbproj";
+        public const string VbProjectFileExtension = "vbproj";
     }
 
     internal static class Guids

@@ -6,12 +6,12 @@ namespace NamespaceFixer.Extensions
     {
         public static bool IsProjectFile(this string path)
         {
-            return Path.GetExtension(path) == Statics.CsProjectFileExtension;
+            return ProjectHelper.IsValidProjectExtension(Path.GetExtension(path));
         }
 
         public static bool IsProjectFile(this FileInfo fileInfo)
         {
-            return fileInfo.Extension.EndsWith(Statics.CsProjectFileExtension);
+            return ProjectHelper.IsValidProjectExtension(fileInfo.Extension);
         }
     }
 }

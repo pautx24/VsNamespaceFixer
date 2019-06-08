@@ -1,13 +1,11 @@
-﻿using NamespaceFixer.Extensions;
-using System;
+﻿using System;
 using System.IO;
 using System.IO.Extensions;
-using System.Linq;
 using System.Xml;
 
 namespace NamespaceFixer.NamespaceBuilder
 {
-    internal class NamespaceBuilderService : INamespaceBuilder
+    internal abstract class NamespaceBuilderService : INamespaceBuilder
     {
         private readonly INamespaceAdjusterOptions _options;
 
@@ -24,15 +22,17 @@ namespace NamespaceFixer.NamespaceBuilder
             var projectToSolutionPhisicalPath = GetProjectToSolutionPysicalPath(solutionFile, projectFile);
             var projectToSolutionVirtualPath = string.Empty; // GetProjectToSolutionVirtualPath(solutionFile, projectFile);
             var fileToProjectPath = GetFileToProjectPath(projectFile, filePath);
-            
+
             return BuildNamespaceAccordingToOptions(
-                solutionName, 
-                projectName, 
-                projectRootNamespace, 
-                projectToSolutionPhisicalPath, 
-                projectToSolutionVirtualPath, 
+                solutionName,
+                projectName,
+                projectRootNamespace,
+                projectToSolutionPhisicalPath,
+                projectToSolutionVirtualPath,
                 fileToProjectPath);
         }
+
+        public abstract bool UpdateFile(ref string fileContent, string desiredNamespace);
 
         private string GetFileToProjectPath(FileInfo projectFile, string filePath)
         {
@@ -67,7 +67,7 @@ namespace NamespaceFixer.NamespaceBuilder
             {
                 newNamespace = newNamespace.Replace(namespaceSection, "/" + sectionValue);
             };
-            
+
             replaceWithFormat(NamespaceSections.SolutionName, solutionName);
             replaceWithFormat(NamespaceSections.ProjectName, projectName);
             replaceWithFormat(NamespaceSections.ProjectRootNamespace, projectRootNamespace);
