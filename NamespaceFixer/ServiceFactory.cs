@@ -1,52 +1,29 @@
-﻿using NamespaceFixer.InnerPathFinder;
-using NamespaceFixer.NamespaceBuilder;
+﻿using NamespaceFixer.NamespaceBuilder;
 using System;
 
 namespace NamespaceFixer
 {
     internal class ServiceFactory
     {
-        internal static IInnerPathFinder CreateInnerPathFinderService(string extension)
-        {
-            IInnerPathFinder rslt = null;
-
-            switch (extension)
-            {
-                case "cs":
-                    rslt = new CsInnerPathFinderService();
-                    break;
-
-                case "vb":
-                    rslt = new VbInnerPathFinderService();
-                    break;
-            }
-
-            if (rslt is null)
-            {
-                throw new Exception($"Unsupported file '{extension}'.");
-            }
-
-            return rslt;
-        }
-
         internal static INamespaceBuilder CreateNamespaceBuilderService(string extension, INamespaceAdjusterOptions options)
         {
             INamespaceBuilder rslt = null;
+            string projectName = ProjectHelper.GetProjectExtensionName(extension);
 
-            switch (extension)
+            switch (projectName)
             {
-                case "cs":
+                case Statics.CsProjectFileExtension:
                     rslt = new CsNamespaceBuilderService(options);
                     break;
 
-                case "vb":
+                case Statics.VbProjectFileExtension:
                     rslt = new VbNamespaceBuilderService(options);
                     break;
             }
 
             if (rslt is null)
             {
-                throw new Exception($"Unsupported file '{extension}'.");
+                throw new Exception($"Unsupported project file '{projectName}'.");
             }
 
             return rslt;

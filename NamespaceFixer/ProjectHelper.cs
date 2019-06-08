@@ -8,10 +8,15 @@ namespace NamespaceFixer
     internal class ProjectHelper
     {
 
-        public static bool IsValidProjectExtension(string pExtensionName)
+        public static bool IsValidProjectExtension(string extensionName)
         {
-            string projectName = pExtensionName.StartsWith(".") ? pExtensionName.Substring(1) : pExtensionName;
+            string projectName = GetProjectExtensionName(extensionName);
             return projectName == Statics.CsProjectFileExtension || projectName == Statics.VbProjectFileExtension;
+        }
+
+        public static string GetProjectExtensionName(string extensionName)
+        {
+            return extensionName.StartsWith(".") ? extensionName.Substring(1) : extensionName;
         }
 
         public static FileInfo GetProjectFilePath(string filePath)

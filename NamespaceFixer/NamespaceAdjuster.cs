@@ -12,9 +12,9 @@ namespace NamespaceFixer
 {
     internal sealed class NamespaceAdjuster
     {
-        private IInnerPathFinder _innerPathFinder;
         private INamespaceBuilder _namespaceBuilder;
 
+        private readonly IInnerPathFinder _innerPathFinder;
         private readonly ISolutionSelectionService _solutionSelectionService;
         private readonly INamespaceAdjusterOptions _options;
         private readonly Package _package;
@@ -22,10 +22,12 @@ namespace NamespaceFixer
         private NamespaceAdjuster(
             Package package,
             ISolutionSelectionService solutionSelectionService,
+            IInnerPathFinder innerPathFinder,
             INamespaceAdjusterOptions options)
         {
             _package = package;
             _solutionSelectionService = solutionSelectionService;
+            _innerPathFinder = innerPathFinder;
             _options = options;
         }
 
@@ -36,11 +38,13 @@ namespace NamespaceFixer
         public static void Initialize(
             Package package,
             ISolutionSelectionService solutionSelectionService,
+            IInnerPathFinder innerPathFinder,
             INamespaceAdjusterOptions options)
         {
             Instance = new NamespaceAdjuster(
                 package,
                 solutionSelectionService,
+                innerPathFinder,
                 options);
             Instance.Initialize();
         }
@@ -77,7 +81,6 @@ namespace NamespaceFixer
             var projectFile = ProjectHelper.GetProjectFilePath(allPaths[0]);
             var solutionFile = ProjectHelper.GetSolutionFilePath(projectFile.Directory.FullName);
 
-            _innerPathFinder = ServiceFactory.CreateInnerPathFinderService(projectFile.Extension);
             _namespaceBuilder = ServiceFactory.CreateNamespaceBuilderService(projectFile.Extension, _options);
 
             allPaths.ToList().ForEach(f => FixNamespace(f, solutionFile, projectFile));
