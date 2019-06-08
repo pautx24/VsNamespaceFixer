@@ -35,7 +35,7 @@ namespace NamespaceFixer.InnerPathFinder
 
         private string GetHiddenFilesRegex(FileInfo file)
         {
-            return file.NameWithoutExtension() + "\\.\\w+\\([.cs|.vb])";
+            return file.NameWithoutExtension() + "\\.\\w+\\.(cs|vb)";
         }
 
         private IEnumerable<string> GetItemWithRelatedPaths(string itemPath)
