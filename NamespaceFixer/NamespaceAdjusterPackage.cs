@@ -1,12 +1,10 @@
 ﻿using Microsoft.VisualStudio.Shell;
 using NamespaceFixer.InnerPathFinder;
-using NamespaceFixer.NamespaceBuilder;
 using NamespaceFixer.SolutionSelection;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace NamespaceFixer
 {
@@ -41,8 +39,7 @@ namespace NamespaceFixer
             var options = (OptionPage)GetDialogPage(typeof(OptionPage));
             var solutionSelection = new SolutionSelectionService();
             var innerPathFinder = new InnerPathFinderService();
-            var namespaceBuilder = new NamespaceBuilderService(options);
-            NamespaceAdjuster.Initialize(this, solutionSelection, innerPathFinder, namespaceBuilder, options);
+            NamespaceAdjuster.Initialize(this, solutionSelection, innerPathFinder, options);
             base.Initialize();
 
             return base.InitializeAsync(cancellationToken, progress);

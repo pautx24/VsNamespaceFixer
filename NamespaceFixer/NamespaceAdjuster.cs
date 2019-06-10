@@ -6,17 +6,16 @@ using NamespaceFixer.SolutionSelection;
 using System;
 using System.ComponentModel.Design;
 using System.IO;
-using System.IO.Extensions;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace NamespaceFixer
 {
     internal sealed class NamespaceAdjuster
     {
+        private INamespaceBuilder _namespaceBuilder;
+
         private readonly IInnerPathFinder _innerPathFinder;
         private readonly ISolutionSelectionService _solutionSelectionService;
-        private readonly INamespaceBuilder _namespaceBuilder;
         private readonly INamespaceAdjusterOptions _options;
         private readonly Package _package;
 
@@ -24,13 +23,11 @@ namespace NamespaceFixer
             Package package,
             ISolutionSelectionService solutionSelectionService,
             IInnerPathFinder innerPathFinder,
-            INamespaceBuilder namespaceBuilder,
             INamespaceAdjusterOptions options)
         {
             _package = package;
             _solutionSelectionService = solutionSelectionService;
             _innerPathFinder = innerPathFinder;
-            _namespaceBuilder = namespaceBuilder;
             _options = options;
         }
 
@@ -42,14 +39,12 @@ namespace NamespaceFixer
             Package package,
             ISolutionSelectionService solutionSelectionService,
             IInnerPathFinder innerPathFinder,
-            INamespaceBuilder namespaceBuilder,
             INamespaceAdjusterOptions options)
         {
             Instance = new NamespaceAdjuster(
                 package,
                 solutionSelectionService,
                 innerPathFinder,
-                namespaceBuilder,
                 options);
             Instance.Initialize();
         }
@@ -83,24 +78,12 @@ namespace NamespaceFixer
                 return;
             }
 
-            var projectFile = GetProjectFilePath(allPaths[0]);
-            var solutionFile = GetSolutionFilePath(projectFile.Directory.FullName);
+            var projectFile = ProjectHelper.GetProjectFilePath(allPaths[0]);
+            var solutionFile = ProjectHelper.GetSolutionFilePath(projectFile.Directory.FullName);
+
+            _namespaceBuilder = ServiceFactory.CreateNamespaceBuilderService(projectFile.Extension, _options);
+
             allPaths.ToList().ForEach(f => FixNamespace(f, solutionFile, projectFile));
-        }
-
-        private FileInfo GetProjectFilePath(string filePath)
-        {
-            var directory = Directory.GetParent(filePath);
-            FileInfo file;
-
-            while (!TryGetProjectFile(directory, out file)) { directory = directory.Parent; }
-
-            return file;
-        }
-
-        private string BuildNamespaceLine(string desiredNamespace)
-        {
-            return "namespace " + desiredNamespace;
         }
 
         private void FixNamespace(string filePath, FileInfo solutionFile, FileInfo projectFile)
@@ -114,74 +97,12 @@ namespace NamespaceFixer
 
             var desiredNamespace = _namespaceBuilder.GetNamespace(filePath, solutionFile, projectFile);
 
-            var updated = UpdateFile(ref fileContent, desiredNamespace);
+            var updated = _namespaceBuilder.UpdateFile(ref fileContent, desiredNamespace);
 
             if (updated)
             {
                 File.WriteAllText(filePath, fileContent);
             }
-        }
-
-        private FileInfo GetSolutionFilePath(string projectFilePath)
-        {
-            var directory = new DirectoryInfo(projectFilePath);
-            FileInfo solutionFile;
-
-            while (!TryGetSolutionFile(directory, out solutionFile)) { directory = directory.Parent; }
-
-            return solutionFile;
-        }
-
-        private bool TryGetProjectFile(DirectoryInfo directory, out FileInfo directoryFile)
-        {
-            AssertIsNotRootDirectory(directory, "project");
-            directoryFile = directory.EnumerateFiles().FirstOrDefault(f => f.Extension == ".csproj");
-
-            return directoryFile != null;
-        }
-
-        private bool TryGetSolutionFile(DirectoryInfo directory, out FileInfo solutionFile)
-        {
-            AssertIsNotRootDirectory(directory, "solution");
-
-            solutionFile = directory.EnumerateFiles().FirstOrDefault(f => f.Extension == ".sln");
-
-            return solutionFile != null;
-        }
-
-        private void AssertIsNotRootDirectory(DirectoryInfo directory, string fileLookingFor)
-        {
-            if (directory.IsRoot())
-            {
-                throw new Exception($"The root has been reached and the {fileLookingFor} has been not found");
-            }
-        }
-
-        private bool UpdateFile(ref string fileContent, string desiredNamespace)
-        {
-            var namespaceMatch = Regex.Match(fileContent, "namespace\\s([^\n{]+)");
-
-            if (!namespaceMatch.Success)
-            {
-                return false;
-            }
-
-            var fileRequiresUpdate = false;
-            foreach (var group in namespaceMatch.Groups)
-            {
-                if (group is Match match)
-                {
-                    var currentNamespace = match.Value.Trim().Split(' ').Last().Trim();
-
-                    if (currentNamespace != desiredNamespace)
-                    {
-                        fileRequiresUpdate = true;
-                        fileContent = fileContent.Replace(BuildNamespaceLine(currentNamespace), BuildNamespaceLine(desiredNamespace));
-                    }
-                }
-            }
-
-            return fileRequiresUpdate;
         }
     }
 }

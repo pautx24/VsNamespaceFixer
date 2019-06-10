@@ -1,13 +1,11 @@
-﻿using NamespaceFixer.Extensions;
-using System;
+﻿using System;
 using System.IO;
 using System.IO.Extensions;
-using System.Linq;
 using System.Xml;
 
 namespace NamespaceFixer.NamespaceBuilder
 {
-    internal class NamespaceBuilderService : INamespaceBuilder
+    internal abstract class NamespaceBuilderService : INamespaceBuilder
     {
         private readonly INamespaceAdjusterOptions _options;
 
@@ -24,15 +22,32 @@ namespace NamespaceFixer.NamespaceBuilder
             var projectToSolutionPhisicalPath = GetProjectToSolutionPysicalPath(solutionFile, projectFile);
             var projectToSolutionVirtualPath = string.Empty; // GetProjectToSolutionVirtualPath(solutionFile, projectFile);
             var fileToProjectPath = GetFileToProjectPath(projectFile, filePath);
-            
-            return BuildNamespaceAccordingToOptions(
-                solutionName, 
-                projectName, 
-                projectRootNamespace, 
-                projectToSolutionPhisicalPath, 
-                projectToSolutionVirtualPath, 
+
+            string result = BuildNamespaceAccordingToOptions(
+                solutionName,
+                projectName,
+                projectRootNamespace,
+                projectToSolutionPhisicalPath,
+                projectToSolutionVirtualPath,
                 fileToProjectPath);
+
+            return ToValidFormat(result);
         }
+
+        public abstract bool UpdateFile(ref string fileContent, string desiredNamespace);
+
+        internal INamespaceAdjusterOptions GetOptions()
+        {
+            return _options;
+        }
+
+        internal abstract string BuildNamespaceAccordingToOptions(
+         string solutionName,
+         string projectName,
+         string projectRootNamespace,
+         string projectToSolutionPhysicalPath,
+         string projectToSolutionVirtualPath,
+         string fileToProjectPath);
 
         private string GetFileToProjectPath(FileInfo projectFile, string filePath)
         {
@@ -51,31 +66,6 @@ namespace NamespaceFixer.NamespaceBuilder
                 return string.Empty;
 
             return projectFile.Directory.FullName.Substring(solutionFile.Directory.FullName.Length + 1);
-        }
-
-        private string BuildNamespaceAccordingToOptions(
-            string solutionName,
-            string projectName,
-            string projectRootNamespace,
-            string projectToSolutionPhisicalPath,
-            string projectToSolutionVirtualPath,
-            string fileToProjectPath)
-        {
-            var newNamespace = _options.NamespaceFormat;
-
-            Action<string, string> replaceWithFormat = (namespaceSection, sectionValue) =>
-            {
-                newNamespace = newNamespace.Replace(namespaceSection, "/" + sectionValue);
-            };
-            
-            replaceWithFormat(NamespaceSections.SolutionName, solutionName);
-            replaceWithFormat(NamespaceSections.ProjectName, projectName);
-            replaceWithFormat(NamespaceSections.ProjectRootNamespace, projectRootNamespace);
-            replaceWithFormat(NamespaceSections.ProjectToSolutionPhysicalPath, projectToSolutionPhisicalPath);
-            replaceWithFormat(NamespaceSections.ProjectToSolutionVirtualPath, projectToSolutionVirtualPath);
-            replaceWithFormat(NamespaceSections.FileToProjectPath, fileToProjectPath);
-
-            return ToValidFormat(newNamespace);
         }
 
         private string ToValidFormat(string name)
