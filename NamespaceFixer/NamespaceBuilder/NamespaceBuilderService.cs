@@ -93,7 +93,7 @@ namespace NamespaceFixer.NamespaceBuilder
                 }
             }
 
-            return Path.GetFileName(projectFile.FullName);
+            return Path.GetFileNameWithoutExtension(projectFile.FullName);
         }
 
         private XmlReader BuildXmlProjectFileReader(FileInfo projectFile)
