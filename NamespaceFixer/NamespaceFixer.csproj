@@ -59,7 +59,7 @@
     <Compile Include="Extensions\FileExtensions.cs" />
     <Compile Include="NamespaceBuilder\VbNamespaceBuilderService.cs" />
     <Compile Include="NamespaceBuilder\CsNamespaceBuilderService.cs" />
-    <Compile Include="ServiceFactory.cs" />
+    <Compile Include="NamespaceBuilder\NamespaceBuilderFactory.cs" />
     <Compile Include="InnerPathFinder\IInnerPathFinder.cs" />
     <Compile Include="InnerPathFinder\InnerPathFinderService.cs" />
     <Compile Include="Extensions\PathExtensions.cs" />

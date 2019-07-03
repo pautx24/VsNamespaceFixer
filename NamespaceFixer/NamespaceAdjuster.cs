@@ -81,7 +81,7 @@ namespace NamespaceFixer
             var projectFile = ProjectHelper.GetProjectFilePath(allPaths[0]);
             var solutionFile = ProjectHelper.GetSolutionFilePath(projectFile.Directory.FullName);
 
-            _namespaceBuilder = ServiceFactory.CreateNamespaceBuilderService(projectFile.Extension, _options);
+            _namespaceBuilder = NamespaceBuilderFactory.CreateNamespaceBuilderService(projectFile.Extension, _options);
 
             allPaths.ToList().ForEach(f => FixNamespace(f, solutionFile, projectFile));
         }

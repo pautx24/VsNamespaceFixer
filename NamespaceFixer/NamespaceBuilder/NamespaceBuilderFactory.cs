@@ -1,9 +1,9 @@
-﻿using NamespaceFixer.NamespaceBuilder;
+using NamespaceFixer.NamespaceBuilder;
 using System;
 
-namespace NamespaceFixer
+namespace NamespaceFixer.NamespaceBuilder
 {
-    internal class ServiceFactory
+    internal class NamespaceBuilderFactory
     {
         internal static INamespaceBuilder CreateNamespaceBuilderService(string extension, INamespaceAdjusterOptions options)
         {
