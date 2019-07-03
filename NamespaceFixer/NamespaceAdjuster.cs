@@ -93,7 +93,9 @@ namespace NamespaceFixer
                 return;
             }
 
-            var fileContent = File.ReadAllText(filePath);
+            var encoding = NamespaceFixer.Extensions.PathExtensions.GetEncoding(filePath);
+
+            var fileContent = File.ReadAllText(filePath, encoding);
 
             var desiredNamespace = _namespaceBuilder.GetNamespace(filePath, solutionFile, projectFile);
 
@@ -101,7 +103,7 @@ namespace NamespaceFixer
 
             if (updated)
             {
-                File.WriteAllText(filePath, fileContent);
+                File.WriteAllText(filePath, fileContent, encoding);
             }
         }
     }
