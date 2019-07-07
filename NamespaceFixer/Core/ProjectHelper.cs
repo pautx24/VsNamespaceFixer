@@ -1,9 +1,10 @@
-﻿using System;
+using Microsoft.VisualStudio.Shell;
+using System;
 using System.IO;
 using System.IO.Extensions;
 using System.Linq;
 
-namespace NamespaceFixer
+namespace NamespaceFixer.Core
 {
     internal class ProjectHelper
     {
@@ -31,10 +32,22 @@ namespace NamespaceFixer
 
         public static FileInfo GetSolutionFilePath(string projectFilePath)
         {
-            var directory = new DirectoryInfo(projectFilePath);
-            FileInfo solutionFile;
+            ThreadHelper.ThrowIfNotOnUIThread();
 
-            while (!TryGetSolutionFile(directory, out solutionFile)) { directory = directory.Parent; }
+            FileInfo solutionFile = null;
+            VsItemInfo startupProject = PackageHelper.GetStartupProject();
+
+            if (startupProject != null)
+            {
+                solutionFile = new FileInfo(startupProject.GetSolutionFullPath());
+            }
+
+            if (solutionFile == null || !solutionFile.Exists)
+            {
+                var directory = new DirectoryInfo(projectFilePath);
+
+                while (!TryGetSolutionFile(directory, out solutionFile)) { directory = directory.Parent; }
+            }
 
             return solutionFile;
         }

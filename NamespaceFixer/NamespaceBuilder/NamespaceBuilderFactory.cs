@@ -1,4 +1,4 @@
-using NamespaceFixer.NamespaceBuilder;
+using NamespaceFixer.Core;
 using System;
 
 namespace NamespaceFixer.NamespaceBuilder
@@ -28,5 +28,6 @@ namespace NamespaceFixer.NamespaceBuilder
 
             return rslt;
         }
+
     }
 }
