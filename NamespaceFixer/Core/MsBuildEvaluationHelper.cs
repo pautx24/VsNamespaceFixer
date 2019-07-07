@@ -10,7 +10,7 @@ namespace NamespaceFixer.Core
         /// Absolute path to the solution file.
         /// Example : J:\Repos\Tr4ncer\VsNamespaceFixer\NamespaceFixer.sln
         /// </summary>
-        public const string cSolutionPathProperty = "SolutionPath";
+        public const string SolutionPathProperty = "SolutionPath";
 
         private static ProjectCollection _AllProjects = null;
 

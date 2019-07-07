@@ -46,7 +46,7 @@ namespace NamespaceFixer.Core
         public string GetSolutionFullPath()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            return GetMsBuildProjectValue(MsBuildEvaluationHelper.cSolutionPathProperty);
+            return GetMsBuildProjectValue(MsBuildEvaluationHelper.SolutionPathProperty);
         }
 
         public string GetName()
