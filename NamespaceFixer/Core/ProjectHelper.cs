@@ -39,7 +39,12 @@ namespace NamespaceFixer.Core
 
             if (startupProject != null)
             {
-                solutionFile = new FileInfo(startupProject.GetSolutionFullPath());
+                string solutionFullPath = startupProject.GetSolutionFullPath();
+
+                if (solutionFullPath != null)
+                {
+                    solutionFile = new FileInfo(solutionFullPath);
+                }
             }
 
             if (solutionFile == null || !solutionFile.Exists)
