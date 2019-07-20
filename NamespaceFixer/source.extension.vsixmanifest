@@ -13,7 +13,7 @@
     <Tags>Namespace; Fix; Convention</Tags>
   </Metadata>
   <Installation>
-    <InstallationTarget Version="[15.0,17.0)"
+    <InstallationTarget Version="[14.0,17.0)"
                         Id="Microsoft.VisualStudio.Community" />
   </Installation>
   <Dependencies>
