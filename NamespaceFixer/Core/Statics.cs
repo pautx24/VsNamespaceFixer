@@ -12,7 +12,7 @@ namespace NamespaceFixer.Core
         /// - assemblyinfo.
         /// - source.extension.vsixmanifest
         /// </summary>
-        public const string PackageVersion = "1.9";
+        public const string PackageVersion = "2.0";
 
         public const string CsProjectFileExtension = "csproj";
         public const string VbProjectFileExtension = "vbproj";
