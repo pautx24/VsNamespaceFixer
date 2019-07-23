@@ -19,7 +19,7 @@ namespace NamespaceFixer.NamespaceBuilder
             var solutionName = solutionFile.NameWithoutExtension();
             var projectName = projectFile.NameWithoutExtension();
             var projectRootNamespace = GetRootNamespaceFromProject(projectFile);
-            var projectToSolutionPhisicalPath = GetProjectToSolutionPysicalPath(solutionFile, projectFile);
+            var projectToSolutionPhysicalPath = GetProjectToSolutionPhysicalPath(solutionFile, projectFile);
             var projectToSolutionVirtualPath = string.Empty; // GetProjectToSolutionVirtualPath(solutionFile, projectFile);
             var fileToProjectPath = GetFileToProjectPath(projectFile, filePath);
 
@@ -27,7 +27,7 @@ namespace NamespaceFixer.NamespaceBuilder
                 solutionName,
                 projectName,
                 projectRootNamespace,
-                projectToSolutionPhisicalPath,
+                projectToSolutionPhysicalPath,
                 projectToSolutionVirtualPath,
                 fileToProjectPath);
 
@@ -59,13 +59,19 @@ namespace NamespaceFixer.NamespaceBuilder
             throw new NotImplementedException();
         }
 
-        private string GetProjectToSolutionPysicalPath(FileInfo solutionFile, FileInfo projectFile)
+        private string GetProjectToSolutionPhysicalPath(FileInfo solutionFile, FileInfo projectFile)
         {
-            var projectAndSolutionFilesAreSameDirectory = projectFile.Directory.FullName.Equals(solutionFile.Directory.FullName);
+            string solutionDirectoryFullName = solutionFile.Directory.FullName;
+            string projectDirectoryFullName = projectFile.Directory.FullName;
+
+            if (!projectDirectoryFullName.StartsWith(solutionDirectoryFullName))
+                return string.Empty;
+
+            var projectAndSolutionFilesAreSameDirectory = projectDirectoryFullName.Equals(solutionDirectoryFullName);
             if (projectAndSolutionFilesAreSameDirectory)
                 return string.Empty;
 
-            return projectFile.Directory.FullName.Substring(solutionFile.Directory.FullName.Length + 1);
+            return projectDirectoryFullName.Substring(solutionDirectoryFullName.Length + 1);
         }
 
         private string ToValidFormat(string name)
@@ -81,18 +87,18 @@ namespace NamespaceFixer.NamespaceBuilder
 
         private string GetRootNamespaceFromProject(FileInfo projectFile)
         {
-            var reader = BuildXmlProjectFileReader(projectFile);
-
-            while (reader.Read())
+            using (var reader = BuildXmlProjectFileReader(projectFile))
             {
-                if (reader.NodeType == XmlNodeType.Element && reader.Name == "RootNamespace")
+                while (reader.Read())
                 {
-                    reader.Read();
+                    if (reader.NodeType == XmlNodeType.Element && reader.Name == "RootNamespace")
+                    {
+                        reader.Read();
 
-                    return reader.NodeType == XmlNodeType.Text ? reader.Value : null;
+                        return reader.NodeType == XmlNodeType.Text ? reader.Value : null;
+                    }
                 }
             }
-
             return Path.GetFileNameWithoutExtension(projectFile.FullName);
         }
 

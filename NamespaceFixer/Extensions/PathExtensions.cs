@@ -1,3 +1,4 @@
+using NamespaceFixer.Core;
 using System.IO;
 using System.Text;
 

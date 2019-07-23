@@ -1,9 +1,19 @@
-﻿using System;
+using System;
 
-namespace NamespaceFixer
+namespace NamespaceFixer.Core
 {
     internal static class Statics
     {
+        /// <summary>
+        /// Version of the extension.
+        /// 
+        /// To update in:
+        /// - below.
+        /// - assemblyinfo.
+        /// - source.extension.vsixmanifest
+        /// </summary>
+        public const string PackageVersion = "1.9";
+
         public const string CsProjectFileExtension = "csproj";
         public const string VbProjectFileExtension = "vbproj";
     }

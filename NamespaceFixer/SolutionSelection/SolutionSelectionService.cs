@@ -9,6 +9,8 @@ namespace NamespaceFixer.SolutionSelection
     {
         public string[] GetSelectedItemsPaths()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var selectedItems = GetSelectedItems();
             if (selectedItems == null)
             {
@@ -28,6 +30,8 @@ namespace NamespaceFixer.SolutionSelection
 
         private Array GetSelectedItems()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var _applicationObject = GetDTE2();
             var uih = _applicationObject.ToolWindows.SolutionExplorer;
             return (Array)uih.SelectedItems;

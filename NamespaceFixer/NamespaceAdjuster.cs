@@ -1,5 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.VisualStudio.Shell;
+﻿using Microsoft.VisualStudio.Shell;
+using NamespaceFixer.Core;
 using NamespaceFixer.InnerPathFinder;
 using NamespaceFixer.NamespaceBuilder;
 using NamespaceFixer.SolutionSelection;
@@ -33,7 +33,7 @@ namespace NamespaceFixer
 
         public static NamespaceAdjuster Instance { get; private set; }
 
-        private IServiceProvider ServiceProvider => _package;
+        internal IServiceProvider ServiceProvider => _package;
 
         public static void Initialize(
             Package package,
@@ -69,21 +69,30 @@ namespace NamespaceFixer
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            var selectedItemPaths = _solutionSelectionService.GetSelectedItemsPaths();
+            ThreadHelper.ThrowIfNotOnUIThread();
 
-            var allPaths = _innerPathFinder.GetAllInnerPaths(selectedItemPaths);
-
-            if (!allPaths.Any())
+            try
             {
-                return;
-            }
+                var selectedItemPaths = _solutionSelectionService.GetSelectedItemsPaths();
 
-            var projectFile = ProjectHelper.GetProjectFilePath(allPaths[0]);
-            var solutionFile = ProjectHelper.GetSolutionFilePath(projectFile.Directory.FullName);
+                var allPaths = _innerPathFinder.GetAllInnerPaths(selectedItemPaths);
+
+                if (!allPaths.Any())
+                {
+                    return;
+                }
+
+                var projectFile = ProjectHelper.GetProjectFilePath(allPaths[0]);
+                var solutionFile = ProjectHelper.GetSolutionFilePath(projectFile.Directory.FullName);
 
             _namespaceBuilder = NamespaceBuilderFactory.CreateNamespaceBuilderService(projectFile.Extension, _options);
 
-            allPaths.ToList().ForEach(f => FixNamespace(f, solutionFile, projectFile));
+                allPaths.ToList().ForEach(f => FixNamespace(f, solutionFile, projectFile));
+            }
+            finally
+            {
+                MsBuildEvaluationHelper.ClearCache();
+            }
         }
 
         private void FixNamespace(string filePath, FileInfo solutionFile, FileInfo projectFile)
