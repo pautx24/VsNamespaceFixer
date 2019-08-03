@@ -11,12 +11,27 @@ namespace NamespaceFixer.NamespaceBuilder
 
         protected override Match GetNamespaceMatch(string fileContent)
         {
-            return Regex.Match(fileContent, "Namespace\\s([^\n{]+)");
+            return Regex.Match(fileContent, "Namespace\\s([^\n]+)");
+        }
+
+        protected override MatchCollection GetUsingMatches(string fileContent)
+        {
+            return Regex.Matches(fileContent, "import\\s([^\n]+)");
         }
 
         protected override string BuildNamespaceLine(string desiredNamespace)
         {
             return "Namespace " + desiredNamespace;
+        }
+
+        protected override string GetNamespaceStartLimiter()
+        {
+            return string.Empty;
+        }
+
+        protected override string GetNamespaceEndLimiter()
+        {
+            return "End Namespace";
         }
 
         internal override string BuildNamespaceAccordingToOptions(

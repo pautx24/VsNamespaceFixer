@@ -14,9 +14,24 @@ namespace NamespaceFixer.NamespaceBuilder
             return Regex.Match(fileContent, "namespace\\s([^\n{]+)");
         }
 
+        protected override MatchCollection GetUsingMatches(string fileContent)
+        {
+            return Regex.Matches(fileContent, @"using\s([^\n]+);");
+        }
+
         protected override string BuildNamespaceLine(string desiredNamespace)
         {
             return "namespace " + desiredNamespace;
+        }
+
+        protected override string GetNamespaceStartLimiter()
+        {
+            return "{";
+        }
+
+        protected override string GetNamespaceEndLimiter()
+        {
+            return "}";
         }
 
         internal override string BuildNamespaceAccordingToOptions(
