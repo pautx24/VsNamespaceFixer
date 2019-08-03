@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.IO.Extensions;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace NamespaceFixer.NamespaceBuilder
@@ -34,7 +36,25 @@ namespace NamespaceFixer.NamespaceBuilder
             return ToValidFormat(result);
         }
 
-        public abstract bool UpdateFile(ref string fileContent, string desiredNamespace);
+        protected abstract Match GetNamespaceMatch(string fileContent);
+
+        protected abstract string BuildNamespaceLine(string desiredNamespace);
+
+        public bool UpdateFile(ref string fileContent, string desiredNamespace)
+        {
+            var namespaceMatch = GetNamespaceMatch(fileContent);
+            var fileRequiresUpdate = false;
+
+            if (namespaceMatch.Success)
+            {
+                fileRequiresUpdate = UpdateNamespace(ref fileContent, desiredNamespace, namespaceMatch);
+            }
+            else
+            {
+                fileRequiresUpdate = CreateNamespace(ref fileContent, desiredNamespace);
+            }
+            return fileRequiresUpdate;
+        }
 
         internal INamespaceAdjusterOptions GetOptions()
         {
@@ -107,6 +127,32 @@ namespace NamespaceFixer.NamespaceBuilder
             XmlReaderSettings settings = new XmlReaderSettings();
             settings.DtdProcessing = DtdProcessing.Parse;
             return XmlReader.Create(projectFile.FullName, settings);
+        }
+
+        private bool UpdateNamespace(ref string fileContent, string desiredNamespace, Match namespaceMatch)
+        {
+            var fileRequiresUpdate = false;
+            foreach (var group in namespaceMatch.Groups)
+            {
+                if (group is Match match)
+                {
+                    var currentNamespace = match.Value.Trim().Split(' ').Last().Trim();
+
+                    if (currentNamespace != desiredNamespace)
+                    {
+                        fileRequiresUpdate = true;
+                        fileContent = fileContent.Replace(BuildNamespaceLine(currentNamespace), BuildNamespaceLine(desiredNamespace));
+                    }
+                }
+            }
+
+            return fileRequiresUpdate;
+        }
+
+        private bool CreateNamespace(ref string fileContent, string desiredNamespace)
+        {
+            var fileRequiresUpdate = false;
+            return fileRequiresUpdate;
         }
     }
 }
