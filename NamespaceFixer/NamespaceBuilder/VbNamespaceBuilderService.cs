@@ -16,7 +16,7 @@ namespace NamespaceFixer.NamespaceBuilder
 
         protected override MatchCollection GetUsingMatches(string fileContent)
         {
-            return Regex.Matches(fileContent, "import\\s([^\n]+)");
+            return Regex.Matches(fileContent, "Imports\\s([^\n]+)");
         }
 
         protected override string BuildNamespaceLine(string desiredNamespace)
