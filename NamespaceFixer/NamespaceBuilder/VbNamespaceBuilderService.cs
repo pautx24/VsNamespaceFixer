@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace NamespaceFixer.NamespaceBuilder
@@ -10,31 +9,29 @@ namespace NamespaceFixer.NamespaceBuilder
         {
         }
 
-        public override bool UpdateFile(ref string fileContent, string desiredNamespace)
+        protected override Match FindNamespaceMatch(string fileContent)
         {
-            var namespaceMatch = Regex.Match(fileContent, "Namespace\\s([^\n{]+)");
+            return Regex.Match(fileContent, "^Namespace\\s([^\n]+)");
+        }
 
-            if (!namespaceMatch.Success)
-            {
-                return false;
-            }
+        protected override MatchCollection FindUsingMatches(string fileContent)
+        {
+            return Regex.Matches(fileContent, "^Imports\\s([^\n]+)");
+        }
 
-            var fileRequiresUpdate = false;
-            foreach (var group in namespaceMatch.Groups)
-            {
-                if (group is Match match)
-                {
-                    var currentNamespace = match.Value.Trim().Split(' ').Last().Trim();
+        protected override string BuildNamespaceLine(string desiredNamespace)
+        {
+            return "Namespace " + desiredNamespace;
+        }
 
-                    if (currentNamespace != desiredNamespace)
-                    {
-                        fileRequiresUpdate = true;
-                        fileContent = fileContent.Replace(BuildNamespaceLine(currentNamespace), BuildNamespaceLine(desiredNamespace));
-                    }
-                }
-            }
+        protected override string GetNamespaceStartLimiter()
+        {
+            return string.Empty;
+        }
 
-            return fileRequiresUpdate;
+        protected override string GetNamespaceEndLimiter()
+        {
+            return "End Namespace";
         }
 
         internal override string BuildNamespaceAccordingToOptions(
@@ -60,11 +57,6 @@ namespace NamespaceFixer.NamespaceBuilder
             replaceWithFormat(NamespaceSections.FileToProjectPath, fileToProjectPath);
 
             return newNamespace;
-        }
-
-        private string BuildNamespaceLine(string desiredNamespace)
-        {
-            return "Namespace " + desiredNamespace;
         }
     }
 }
