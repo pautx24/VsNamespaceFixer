@@ -36,9 +36,9 @@ namespace NamespaceFixer.NamespaceBuilder
             return ToValidFormat(result);
         }
 
-        protected abstract Match GetNamespaceMatch(string fileContent);
+        protected abstract Match FindNamespaceMatch(string fileContent);
 
-        protected abstract MatchCollection GetUsingMatches(string fileContent);
+        protected abstract MatchCollection FindUsingMatches(string fileContent);
 
         protected abstract string BuildNamespaceLine(string desiredNamespace);
 
@@ -48,7 +48,7 @@ namespace NamespaceFixer.NamespaceBuilder
 
         public bool UpdateFile(ref string fileContent, string desiredNamespace)
         {
-            var namespaceMatch = GetNamespaceMatch(fileContent);
+            var namespaceMatch = FindNamespaceMatch(fileContent);
             var fileRequiresUpdate = false;
 
             if (namespaceMatch.Success)
@@ -160,7 +160,7 @@ namespace NamespaceFixer.NamespaceBuilder
             var fileRequiresUpdate = false;
 
             string fullNamespaceWithStartLimiter = BuildNamespaceLine(desiredNamespace) + Environment.NewLine + GetNamespaceStartLimiter() + Environment.NewLine;
-            MatchCollection usingMatches = GetUsingMatches(fileContent);
+            MatchCollection usingMatches = FindUsingMatches(fileContent);
 
             if (usingMatches.Count > 0)
             {
