@@ -49,17 +49,10 @@ namespace NamespaceFixer.NamespaceBuilder
         public bool UpdateFile(ref string fileContent, string desiredNamespace)
         {
             var namespaceMatch = FindNamespaceMatch(fileContent);
-            var fileRequiresUpdate = false;
 
-            if (namespaceMatch.Success)
-            {
-                fileRequiresUpdate = UpdateNamespace(ref fileContent, desiredNamespace, namespaceMatch);
-            }
-            else
-            {
-                fileRequiresUpdate = CreateNamespace(ref fileContent, desiredNamespace);
-            }
-            return fileRequiresUpdate;
+            return namespaceMatch.Success ? 
+                UpdateNamespace(ref fileContent, desiredNamespace, namespaceMatch) :
+                CreateNamespace(ref fileContent, desiredNamespace);
         }
 
         internal INamespaceAdjusterOptions GetOptions()
@@ -78,11 +71,6 @@ namespace NamespaceFixer.NamespaceBuilder
         private string GetFileToProjectPath(FileInfo projectFile, string filePath)
         {
             return Directory.GetParent(filePath).FullName.Substring(projectFile.Directory.FullName.Length);
-        }
-
-        private string GetProjectToSolutionVirtualPath(FileInfo solutionFile, FileInfo projectFile)
-        {
-            throw new NotImplementedException();
         }
 
         private string GetProjectToSolutionPhysicalPath(FileInfo solutionFile, FileInfo projectFile)

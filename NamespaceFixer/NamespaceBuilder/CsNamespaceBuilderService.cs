@@ -11,12 +11,12 @@ namespace NamespaceFixer.NamespaceBuilder
 
         protected override Match FindNamespaceMatch(string fileContent)
         {
-            return Regex.Match(fileContent, "^namespace\\s([^\n{]+)");
+            return Regex.Match(fileContent, "namespace\\s([^\n{]+)");
         }
 
         protected override MatchCollection FindUsingMatches(string fileContent)
         {
-            return Regex.Matches(fileContent, @"^using\s([^\n]+);");
+            return Regex.Matches(fileContent, @"using\s([^\n]+);");
         }
 
         protected override string BuildNamespaceLine(string desiredNamespace)
