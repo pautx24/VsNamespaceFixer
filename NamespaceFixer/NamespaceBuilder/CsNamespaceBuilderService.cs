@@ -5,18 +5,21 @@ namespace NamespaceFixer.NamespaceBuilder
 {
     internal class CsNamespaceBuilderService : NamespaceBuilderService
     {
+        protected override string NamespaceStartLimiter => "{" + Environment.NewLine;
+        protected override string NamespaceEndLimiter => "}";
+
         public CsNamespaceBuilderService(INamespaceAdjusterOptions options) : base(options)
         {
         }
 
         protected override Match FindNamespaceMatch(string fileContent)
         {
-            return Regex.Match(fileContent, "namespace\\s([^\n{]+)");
+            return Regex.Match(fileContent, @"\n?namespace\s(.+)\n+{");
         }
 
         protected override MatchCollection FindUsingMatches(string fileContent)
         {
-            return Regex.Matches(fileContent, @"using\s([^\n]+);");
+            return Regex.Matches(fileContent, @"\n?using\s(.+);");
         }
 
         protected override string BuildNamespaceLine(string desiredNamespace)
@@ -24,15 +27,6 @@ namespace NamespaceFixer.NamespaceBuilder
             return "namespace " + desiredNamespace;
         }
 
-        protected override string GetNamespaceStartLimiter()
-        {
-            return "{";
-        }
-
-        protected override string GetNamespaceEndLimiter()
-        {
-            return "}";
-        }
 
         internal override string BuildNamespaceAccordingToOptions(
           string solutionName,

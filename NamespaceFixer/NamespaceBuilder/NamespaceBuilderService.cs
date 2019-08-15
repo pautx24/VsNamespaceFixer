@@ -11,6 +11,10 @@ namespace NamespaceFixer.NamespaceBuilder
     {
         private readonly INamespaceAdjusterOptions _options;
 
+        protected abstract string NamespaceStartLimiter { get; }
+
+        protected abstract string NamespaceEndLimiter { get; }
+
         public NamespaceBuilderService(INamespaceAdjusterOptions options)
         {
             _options = options;
@@ -42,15 +46,13 @@ namespace NamespaceFixer.NamespaceBuilder
 
         protected abstract string BuildNamespaceLine(string desiredNamespace);
 
-        protected abstract string GetNamespaceStartLimiter();
-
-        protected abstract string GetNamespaceEndLimiter();
-
         public bool UpdateFile(ref string fileContent, string desiredNamespace)
         {
+            if (string.IsNullOrEmpty(desiredNamespace)) return false;
+
             var namespaceMatch = FindNamespaceMatch(fileContent);
 
-            return namespaceMatch.Success ? 
+            return namespaceMatch.Success ?
                 UpdateNamespace(ref fileContent, desiredNamespace, namespaceMatch) :
                 CreateNamespace(ref fileContent, desiredNamespace);
         }
@@ -126,18 +128,17 @@ namespace NamespaceFixer.NamespaceBuilder
         private bool UpdateNamespace(ref string fileContent, string desiredNamespace, Match namespaceMatch)
         {
             var fileRequiresUpdate = false;
-            foreach (var group in namespaceMatch.Groups)
-            {
-                if (group is Match match)
-                {
-                    var currentNamespace = match.Value.Trim().Split(' ').Last().Trim();
 
-                    if (currentNamespace != desiredNamespace)
-                    {
-                        fileRequiresUpdate = true;
-                        fileContent = fileContent.Replace(BuildNamespaceLine(currentNamespace), BuildNamespaceLine(desiredNamespace));
-                    }
-                }
+            var namespaceGroup = namespaceMatch.Groups.OfType<Group>().Where(g => !(g is Match)).FirstOrDefault();
+
+            if (namespaceGroup == null) return false;
+
+            var currentNamespace = namespaceGroup.Value.Trim();
+
+            if (currentNamespace != desiredNamespace)
+            {
+                fileRequiresUpdate = true;
+                fileContent = fileContent.Substring(0, namespaceGroup.Index) + desiredNamespace + fileContent.Substring(namespaceGroup.Index + namespaceGroup.Length);
             }
 
             return fileRequiresUpdate;
@@ -145,35 +146,26 @@ namespace NamespaceFixer.NamespaceBuilder
 
         private bool CreateNamespace(ref string fileContent, string desiredNamespace)
         {
-            var fileRequiresUpdate = false;
-
-            string fullNamespaceWithStartLimiter = BuildNamespaceLine(desiredNamespace) + Environment.NewLine + GetNamespaceStartLimiter() + Environment.NewLine;
-            MatchCollection usingMatches = FindUsingMatches(fileContent);
-
-            if (usingMatches.Count > 0)
+            var usingMatches = FindUsingMatches(fileContent);
+            var lastUsing = usingMatches.OfType<Match>().LastOrDefault();
+                                 
+            string usingSectionContent = string.Empty;
+            if (lastUsing != null)
             {
-
-                Match lastUsing = usingMatches[usingMatches.Count - 1];
-                int nextLineAfterUsing = fileContent.IndexOf(Environment.NewLine, lastUsing.Index + lastUsing.Length);
-
-                if (nextLineAfterUsing > 0)
-                {
-                    fileContent = fileContent.Insert(nextLineAfterUsing + Environment.NewLine.Length, Environment.NewLine + fullNamespaceWithStartLimiter);
-                    fileRequiresUpdate = true;
-                }
-            }
-            else
-            {
-                fileContent = fileContent.Insert(0, fullNamespaceWithStartLimiter);
-                fileRequiresUpdate = true;
+                var indexAfterUsing = lastUsing.Index + lastUsing.Length;
+                usingSectionContent = fileContent.Substring(0, indexAfterUsing).Trim();
+                
+                fileContent = fileContent.Substring(indexAfterUsing);
             }
 
-            if (fileRequiresUpdate)
-            {
-                fileContent += GetNamespaceEndLimiter();
-            }
+            fileContent =
+                (string.IsNullOrEmpty(usingSectionContent) ? string.Empty : usingSectionContent + Environment.NewLine + Environment.NewLine) +
+                BuildNamespaceLine(desiredNamespace) + Environment.NewLine +
+                NamespaceStartLimiter + 
+                fileContent.Trim() + 
+                Environment.NewLine + NamespaceEndLimiter;
 
-            return fileRequiresUpdate;
+            return true;
         }
     }
 }
