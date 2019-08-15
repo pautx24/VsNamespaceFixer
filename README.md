@@ -23,7 +23,7 @@ Hope it fits for you.
 ![Example](/Example.png)
 
 Special thanks go to the pull-requesters:
-* `@Tr4ncer`
-* `@spottedmahn`
-* `@mniak`
-* `@DawidB`
+* [@Tr4ncer](https://github.com/Tr4ncer)
+* [@spottedmahn](https://github.com/spottedmahn)
+* [@mniak](https://github.com/mniak)
+* [@DawidB](https://github.com/DawidB)
