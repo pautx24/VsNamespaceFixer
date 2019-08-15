@@ -21,3 +21,9 @@ The extension is available in the [Marketplace](https://marketplace.visualstudio
 Hope it fits for you.
 
 ![Example](/Example.png)
+
+Special thanks go to the pull-requesters:
+  • @Tr4ncer
+  • @spottedmahn
+  • @mniak
+  • @DawidB
