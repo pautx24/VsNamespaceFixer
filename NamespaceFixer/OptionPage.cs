@@ -21,5 +21,10 @@ The sections that can be used are:
         public string NamespaceFormat { get; set; } =
             NamespaceSections.ProjectName +
             NamespaceSections.FileToProjectPath;
+
+        [Category("Options")]
+        [DisplayName("Extensions of files that will be ignored")]
+        [Description(@"Extensions of files that will be ignored when adjusting namespaces. Please, use ';' to split if more than one.")]
+        public string FileExtensionsToIgnore { get; set; } = string.Empty;
     }
 }

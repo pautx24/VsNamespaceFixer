@@ -18,7 +18,7 @@ namespace NamespaceFixer
         private readonly ISolutionSelectionService _solutionSelectionService;
         private readonly INamespaceAdjusterOptions _options;
         private readonly Package _package;
-
+        
         private NamespaceAdjuster(
             Package package,
             ISolutionSelectionService solutionSelectionService,
@@ -97,7 +97,7 @@ namespace NamespaceFixer
 
         private void FixNamespace(string filePath, FileInfo solutionFile, FileInfo projectFile)
         {
-            if (!File.Exists(filePath))
+            if (!File.Exists(filePath) || IgnoreFile(filePath))
             {
                 return;
             }
@@ -115,5 +115,19 @@ namespace NamespaceFixer
                 File.WriteAllText(filePath, fileContent, encoding);
             }
         }
+
+        private bool IgnoreFile(string path)
+        {
+            var extensionWithoutDot = Path.GetExtension(path).Substring(1);
+
+            return ExtensionsToIgnore.Contains(extensionWithoutDot);
+        }
+                
+        private string[] ExtensionsToIgnore => _options
+                    .FileExtensionsToIgnore
+                    .Split(';')
+                    .Select(ignoredExtension => ignoredExtension.Replace(".", string.Empty).Trim())
+                    .Where(ext => !string.IsNullOrEmpty(ext))
+                    .ToArray();
     }
 }
