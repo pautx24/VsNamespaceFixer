@@ -1,8 +1,6 @@
 ﻿using Microsoft.VisualStudio.Shell;
 using NamespaceFixer.Core;
-using NamespaceFixer.InnerPathFinder;
 using NamespaceFixer.NamespaceBuilder;
-using NamespaceFixer.SolutionSelection;
 using System;
 using System.ComponentModel.Design;
 using System.IO;
@@ -14,68 +12,62 @@ namespace NamespaceFixer
     {
         private INamespaceBuilder _namespaceBuilder;
 
-        private readonly IInnerPathFinder _innerPathFinder;
-        private readonly ISolutionSelectionService _solutionSelectionService;
-        private readonly INamespaceAdjusterOptions _options;
-        private readonly Package _package;
-        
-        private NamespaceAdjuster(
-            Package package,
-            ISolutionSelectionService solutionSelectionService,
-            IInnerPathFinder innerPathFinder,
-            INamespaceAdjusterOptions options)
+        private readonly NamespaceAdjusterPackage _package;
+        private readonly VsServiceInfo _serviceInfo;
+
+        private NamespaceAdjuster(NamespaceAdjusterPackage package)
         {
             _package = package;
-            _solutionSelectionService = solutionSelectionService;
-            _innerPathFinder = innerPathFinder;
-            _options = options;
+            _serviceInfo = new VsServiceInfo(this);
         }
 
         public static NamespaceAdjuster Instance { get; private set; }
 
-        internal IServiceProvider ServiceProvider => _package;
+        internal IServiceProvider ServiceProvider => (Package)_package;
 
-        public static void Initialize(
-            Package package,
-            ISolutionSelectionService solutionSelectionService,
-            IInnerPathFinder innerPathFinder,
-            INamespaceAdjusterOptions options)
+        public static void Initialize(NamespaceAdjusterPackage package)
         {
-            Instance = new NamespaceAdjuster(
-                package,
-                solutionSelectionService,
-                innerPathFinder,
-                options);
+            Instance = new NamespaceAdjuster(package);
             Instance.Initialize();
         }
 
         public void Initialize()
         {
             var commandService = ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+
             if (commandService != null)
             {
                 var menuCommandID = new CommandID(Guids.NamespaceFixerCmdSet, Ids.CmdIdAdjustNamespace);
-                var menuItem = new MenuCommand(MenuItemCallback, menuCommandID);
+                var menuItem = new OleMenuCommand(MenuItemCallback, menuCommandID);
+                //menuItem.BeforeQueryStatus += ButtonQueryStatus; TODO
+
                 commandService.AddCommand(menuItem);
             }
         }
 
+        // TODO
+        //private void ButtonQueryStatus(object sender, EventArgs e)
+        //{
+        //    var button = (MenuCommand)sender;
+        //    button.Visible = false;
+
+        //    _serviceInfo.GetSelectedProjects();
+        //}
+
         /// <summary>
-        /// This function is the callback used to execute the command when the menu item is clicked.
-        /// See the constructor to see how the menu item is associated with this function using
-        /// OleMenuCommandService service and MenuCommand class.
+        /// Click on the button 'Adjust namespaces'.
         /// </summary>
-        /// <param name="sender">Event sender.</param>
-        /// <param name="e">Event args.</param>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             try
             {
-                var selectedItemPaths = _solutionSelectionService.GetSelectedItemsPaths();
+                var selectedItemPaths = _serviceInfo.SolutionSelectionService.GetSelectedItemsPaths();
 
-                var allPaths = _innerPathFinder.GetAllInnerPaths(selectedItemPaths);
+                var allPaths = _serviceInfo.InnerPathFinder.GetAllInnerPaths(selectedItemPaths);
 
                 if (!allPaths.Any())
                 {
@@ -83,9 +75,9 @@ namespace NamespaceFixer
                 }
 
                 var projectFile = ProjectHelper.GetProjectFilePath(allPaths[0]);
-                var solutionFile = ProjectHelper.GetSolutionFilePath(projectFile.Directory.FullName);
+                var solutionFile = ProjectHelper.GetSolutionFilePath(_serviceInfo, projectFile.Directory.FullName);
 
-            _namespaceBuilder = NamespaceBuilderFactory.CreateNamespaceBuilderService(projectFile.Extension, _options);
+                _namespaceBuilder = NamespaceBuilderFactory.CreateNamespaceBuilderService(projectFile.Extension, _package.GetOptionPage());
 
                 allPaths.ToList().ForEach(f => FixNamespace(f, solutionFile, projectFile));
             }
@@ -122,8 +114,8 @@ namespace NamespaceFixer
 
             return ExtensionsToIgnore.Contains(extensionWithoutDot);
         }
-                
-        private string[] ExtensionsToIgnore => _options
+
+        private string[] ExtensionsToIgnore => _package.GetOptionPage()
                     .FileExtensionsToIgnore
                     .Split(';')
                     .Select(ignoredExtension => ignoredExtension.Replace(".", string.Empty).Trim())
