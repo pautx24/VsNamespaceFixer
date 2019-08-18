@@ -138,7 +138,7 @@ namespace NamespaceFixer.NamespaceBuilder
             if (currentNamespace != desiredNamespace)
             {
                 fileRequiresUpdate = true;
-                fileContent = fileContent.Substring(0, namespaceGroup.Index) + desiredNamespace + fileContent.Substring(namespaceGroup.Index + namespaceGroup.Length);
+                fileContent = fileContent.Substring(0, namespaceGroup.Index) + desiredNamespace + fileContent.Substring(namespaceGroup.Index + 1 + namespaceGroup.Length);
             }
 
             return fileRequiresUpdate;
@@ -148,21 +148,21 @@ namespace NamespaceFixer.NamespaceBuilder
         {
             var usingMatches = FindUsingMatches(fileContent);
             var lastUsing = usingMatches.OfType<Match>().LastOrDefault();
-                                 
+
             string usingSectionContent = string.Empty;
             if (lastUsing != null)
             {
                 var indexAfterUsing = lastUsing.Index + lastUsing.Length;
                 usingSectionContent = fileContent.Substring(0, indexAfterUsing).Trim();
-                
+
                 fileContent = fileContent.Substring(indexAfterUsing);
             }
 
             fileContent =
                 (string.IsNullOrEmpty(usingSectionContent) ? string.Empty : usingSectionContent + Environment.NewLine + Environment.NewLine) +
                 BuildNamespaceLine(desiredNamespace) + Environment.NewLine +
-                NamespaceStartLimiter + 
-                fileContent.Trim() + 
+                NamespaceStartLimiter +
+                fileContent.Trim() +
                 Environment.NewLine + NamespaceEndLimiter;
 
             return true;
