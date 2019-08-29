@@ -20,6 +20,8 @@ namespace NamespaceFixer.NamespaceBuilder
             _options = options;
         }
 
+        protected string NewLine { get; set; } = Environment.NewLine;
+
         public string GetNamespace(string filePath, FileInfo solutionFile, FileInfo projectFile)
         {
             var solutionName = solutionFile.NameWithoutExtension();
@@ -50,11 +52,21 @@ namespace NamespaceFixer.NamespaceBuilder
         {
             if (string.IsNullOrEmpty(desiredNamespace)) return false;
 
+            SetNewLine(fileContent);
+
             var namespaceMatch = FindNamespaceMatch(fileContent);
 
             return namespaceMatch.Success ?
                 UpdateNamespace(ref fileContent, desiredNamespace, namespaceMatch) :
                 CreateNamespace(ref fileContent, desiredNamespace);
+        }
+
+        private void SetNewLine(string fileContent)
+        {
+            var isCrlf = fileContent.IndexOf("\r\n") > -1;
+
+            if (isCrlf) NewLine = "\r\n";
+            else NewLine = "\n";
         }
 
         internal INamespaceAdjusterOptions GetOptions()
@@ -138,7 +150,7 @@ namespace NamespaceFixer.NamespaceBuilder
             if (currentNamespace != desiredNamespace)
             {
                 fileRequiresUpdate = true;
-                fileContent = fileContent.Substring(0, namespaceGroup.Index) + desiredNamespace + fileContent.Substring(namespaceGroup.Index + namespaceGroup.Length);
+                fileContent = fileContent.Substring(0, namespaceGroup.Index) + desiredNamespace + fileContent.Substring(namespaceGroup.Index + namespaceGroup.Value.Trim().Length);
             }
 
             return fileRequiresUpdate;
@@ -159,11 +171,11 @@ namespace NamespaceFixer.NamespaceBuilder
             }
 
             fileContent =
-                (string.IsNullOrEmpty(usingSectionContent) ? string.Empty : usingSectionContent + Environment.NewLine + Environment.NewLine) +
-                BuildNamespaceLine(desiredNamespace) + Environment.NewLine +
+                (string.IsNullOrEmpty(usingSectionContent) ? string.Empty : usingSectionContent + NewLine + NewLine) +
+                BuildNamespaceLine(desiredNamespace) + NewLine +
                 NamespaceStartLimiter + 
                 fileContent.Trim() + 
-                Environment.NewLine + NamespaceEndLimiter;
+                NewLine + NamespaceEndLimiter;
 
             return true;
         }
