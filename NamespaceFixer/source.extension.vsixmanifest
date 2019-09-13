@@ -9,7 +9,7 @@
                   Publisher="pcerv" />
         <DisplayName>NamespaceFixer</DisplayName>
         <Description xml:space="preserve">VS Extension to fix namespaces following C# and VB.NET convention</Description>
-        <Icon>Package.ico</Icon>
+        <Icon>Resources\PackageLogo_128.png</Icon>
         <Tags>Namespace; Fix; Convention</Tags>
     </Metadata>
     <Installation>

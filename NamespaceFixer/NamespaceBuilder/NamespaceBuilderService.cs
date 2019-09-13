@@ -160,13 +160,13 @@ namespace NamespaceFixer.NamespaceBuilder
         {
             var usingMatches = FindUsingMatches(fileContent);
             var lastUsing = usingMatches.OfType<Match>().LastOrDefault();
-                                 
+
             string usingSectionContent = string.Empty;
             if (lastUsing != null)
             {
                 var indexAfterUsing = lastUsing.Index + lastUsing.Length;
                 usingSectionContent = fileContent.Substring(0, indexAfterUsing).Trim();
-                
+
                 fileContent = fileContent.Substring(indexAfterUsing);
             }
 

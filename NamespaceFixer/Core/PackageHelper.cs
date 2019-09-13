@@ -1,18 +1,16 @@
 using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using System;
 
 namespace NamespaceFixer.Core
 {
     internal class PackageHelper
     {
-
-        public static bool Success(int requestRslt)
-        {
-            return (requestRslt == VSConstants.S_OK);
-        }
-
+        /// <summary>
+        /// Returns the service represented by the type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static T GetService<T>(Type type)
         {
             IServiceProvider provider = null;
@@ -25,6 +23,13 @@ namespace NamespaceFixer.Core
             return GetService<T>(provider, type);
         }
 
+        /// <summary>
+        /// Returns the service represented by the type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="provider"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static T GetService<T>(IServiceProvider provider, Type type)
         {
             T rslt = default(T);
@@ -40,29 +45,14 @@ namespace NamespaceFixer.Core
             return rslt;
         }
 
-        public static IVsSolutionBuildManager GetVsSolutionBuildManager()
+        /// <summary>
+        /// Determines if the result is a success.
+        /// </summary>
+        /// <param name="requestRslt"></param>
+        /// <returns></returns>
+        public static bool Success(int requestRslt)
         {
-            IVsSolutionBuildManager solutionBuildManager = PackageHelper.GetService<IVsSolutionBuildManager>(typeof(SVsSolutionBuildManager));
-            return solutionBuildManager;
-        }
-
-        public static VsItemInfo GetStartupProject()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            VsItemInfo startupProject = null;
-            IVsSolutionBuildManager solutionBuildManager = GetVsSolutionBuildManager();
-
-            if (solutionBuildManager != null)
-            {
-                IVsHierarchy value = null;
-                bool success = Success(solutionBuildManager.get_StartupProject(out value));
-
-                if (success && value != null)
-                    startupProject = new VsItemInfo(value);
-            }
-
-            return startupProject;
+            return (requestRslt == VSConstants.S_OK);
         }
     }
 }

@@ -30,22 +30,11 @@ namespace NamespaceFixer.Core
             return file;
         }
 
-        public static FileInfo GetSolutionFilePath(string projectFilePath)
+        public static FileInfo GetSolutionFilePath(VsServiceInfo info, string projectFilePath)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            FileInfo solutionFile = null;
-            VsItemInfo startupProject = PackageHelper.GetStartupProject();
-
-            if (startupProject != null)
-            {
-                string solutionFullPath = startupProject.GetSolutionFullPath();
-
-                if (solutionFullPath != null)
-                {
-                    solutionFile = new FileInfo(solutionFullPath);
-                }
-            }
+            FileInfo solutionFile = info.GetSolutionFileInfo();
 
             if (solutionFile == null || !solutionFile.Exists)
             {

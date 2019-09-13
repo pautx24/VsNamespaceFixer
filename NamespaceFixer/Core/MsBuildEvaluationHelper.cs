@@ -12,22 +12,22 @@ namespace NamespaceFixer.Core
         /// </summary>
         public const string SolutionPathProperty = "SolutionPath";
 
-        private static ProjectCollection _AllProjects = null;
+        private static ProjectCollection _allProjects = null;
 
         /// <summary>
-        ///     ''' Nettoyage des variables mises en cache.
-        ///     ''' </summary>
+        /// Cleaning cached variables.
+        /// </summary>
         public static void ClearCache()
         {
-            if (_AllProjects != null)
+            if (_allProjects != null)
             {
-                _AllProjects.Dispose();
-                _AllProjects = null;
+                _allProjects.Dispose();
+                _allProjects = null;
             }
         }
 
         /// <summary>
-        /// returns the known project.
+        /// Returns the known project.
         /// </summary>
         /// <param name="fullPath"></param>
         /// <returns></returns>
@@ -37,15 +37,15 @@ namespace NamespaceFixer.Core
         }
 
         /// <summary>
-        /// returns all known projects.
+        /// Returns all known projects.
         /// </summary>
         /// <returns></returns>
         private static ProjectCollection GetAllProjects()
         {
-            if (_AllProjects == null)
-                _AllProjects = ProjectCollection.GlobalProjectCollection;
+            if (_allProjects == null)
+                _allProjects = ProjectCollection.GlobalProjectCollection;
 
-            return _AllProjects;
+            return _allProjects;
         }
     }
 

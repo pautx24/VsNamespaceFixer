@@ -1,7 +1,5 @@
 ﻿using Microsoft.VisualStudio.Shell;
 using NamespaceFixer.Core;
-using NamespaceFixer.InnerPathFinder;
-using NamespaceFixer.SolutionSelection;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -31,19 +29,31 @@ namespace NamespaceFixer
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(Guids.NamespaceFixerPackage)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
-    [ProvideOptionPage(typeof(OptionPage),
-        "Namespace Fixer options", "Use default project namespace", 0, 0, true)]
+    [ProvideOptionPage(typeof(OptionPage), "Namespace Fixer options", "Use default project namespace", 0, 0, true)]
+    //[ProvideUIContextRule(Guids.UiContextSupportedFiles, TODO
+    //    name: "Supported Files",
+    //    expression: "CSharp | VisualBasic",
+    //    termNames: new[] { "CSharp", "VisualBasic" },
+    //    termValues: new[] { "HierSingleSelectionName:.cs$", "HierSingleSelectionName:.vb$" })]
     public sealed class NamespaceAdjusterPackage : AsyncPackage
     {
+        private OptionPage _options;
+
         protected override System.Threading.Tasks.Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            var options = (OptionPage)GetDialogPage(typeof(OptionPage));
-            var solutionSelection = new SolutionSelectionService();
-            var innerPathFinder = new InnerPathFinderService();
-            NamespaceAdjuster.Initialize(this, solutionSelection, innerPathFinder, options);
+            NamespaceAdjuster.Initialize(this);
             base.Initialize();
 
             return base.InitializeAsync(cancellationToken, progress);
+        }
+
+        internal OptionPage GetOptionPage()
+        {
+            if (_options == null)
+            {
+                _options = (OptionPage)GetDialogPage(typeof(OptionPage));
+            }
+            return _options;
         }
     }
 }
