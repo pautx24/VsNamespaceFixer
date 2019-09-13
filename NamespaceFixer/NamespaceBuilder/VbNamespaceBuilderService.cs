@@ -14,12 +14,12 @@ namespace NamespaceFixer.NamespaceBuilder
 
         protected override Match FindNamespaceMatch(string fileContent)
         {
-            return Regex.Match(fileContent, @"\n?Namespace\s(.+)\n");
+            return Regex.Match(fileContent, @"[\r\n|\r|\n]?Namespace\s(.+)[\r\n|\r|\n]");
         }
 
         protected override MatchCollection FindUsingMatches(string fileContent)
         {
-            return Regex.Matches(fileContent, @"\n?Imports\s(.+)\n");
+            return Regex.Matches(fileContent, @"[\r\n|\r|\n]?Imports\s(.+)[\r\n|\r|\n]");
         }
 
         protected override string BuildNamespaceLine(string desiredNamespace)
