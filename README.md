@@ -12,7 +12,7 @@ There are a couple of options you can choose from (can be found at Tools > Optio
 * `{solutionName}`: just the solution file name.
 * `{projectName}`: just the project file name.
 * `{projectRootNamespace}`: the 'Default namespace' specified in the properties of the project.
-* `{projectToSolutionPhisicalPath}`: the path from the project file directory to the solution file directory.
+* `{projectToSolutionPhysicalPath}`: the path from the project file directory to the solution file directory.
 * `{fileToProjectPath}`: the physical path from the file adjusting the path of to the project directory.
 
 The default namespace format is specified as: `{projectName}{fileToProjectPath}`.
