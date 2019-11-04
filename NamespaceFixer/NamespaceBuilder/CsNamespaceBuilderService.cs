@@ -14,7 +14,7 @@ namespace NamespaceFixer.NamespaceBuilder
 
         protected override Match FindNamespaceMatch(string fileContent)
         {
-            return Regex.Match(fileContent, @"[\r\n|\r|\n]?namespace\s(.+)[\r\n|\r|\n]+{");
+            return Regex.Match(fileContent, @"[\r\n|\r|\n]?namespace\s(.+)[\r\n|\r|\n]*{");
         }
 
         protected override MatchCollection FindUsingMatches(string fileContent)
