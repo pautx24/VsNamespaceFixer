@@ -29,3 +29,4 @@ Special thanks go to the pull-requesters:
 * [@spottedmahn](https://github.com/spottedmahn)
 * [@mniak](https://github.com/mniak)
 * [@DawidB](https://github.com/DawidB)
+* [@angelobreuer](https://github.com/angelobreuer)
