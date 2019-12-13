@@ -1,9 +1,12 @@
-﻿using Microsoft.VisualStudio.Shell;
+﻿using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using NamespaceFixer.Core;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Threading;
 
 namespace NamespaceFixer
 {
@@ -45,6 +48,26 @@ namespace NamespaceFixer
             base.Initialize();
 
             return base.InitializeAsync(cancellationToken, progress);
+        }
+
+        /// <summary>
+        /// Retrieves the file information for the current solution file.
+        /// </summary>
+        /// <returns>the file information for the current solution file</returns>
+        internal FileInfo GetSolutionFile()
+        {
+            // verify thread access
+            Dispatcher.CurrentDispatcher.VerifyAccess();
+
+            // retrieve DTE as service
+            if (!(GetService(typeof(DTE)) is DTE dte))
+            {
+                // failed to retrieve service
+                throw new InvalidOperationException("Could not receive DTE service.");
+            }
+
+            // create file information
+            return new FileInfo(dte.Solution.FullName);
         }
 
         internal OptionPage GetOptionPage()
