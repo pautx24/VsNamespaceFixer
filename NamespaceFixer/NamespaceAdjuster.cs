@@ -74,8 +74,8 @@ namespace NamespaceFixer
                     return;
                 }
 
+                var solutionFile = _package.GetSolutionFile();
                 var projectFile = ProjectHelper.GetProjectFilePath(allPaths[0]);
-                var solutionFile = ProjectHelper.GetSolutionFilePath(_serviceInfo, projectFile.Directory.FullName);
 
                 _namespaceBuilder = NamespaceBuilderFactory.CreateNamespaceBuilderService(projectFile.Extension, _package.GetOptionPage());
 
