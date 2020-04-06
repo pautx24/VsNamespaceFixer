@@ -74,6 +74,7 @@
     <Compile Include="NamespaceBuilder\INamespaceBuilder.cs" />
     <Compile Include="NamespaceBuilder\NamespaceBuilderService.cs" />
     <Compile Include="NamespaceBuilder\NamespaceSections.cs" />
+    <Compile Include="NamespaceBuilder\XamlNamespaceBuilderService.cs" />
     <Compile Include="OptionPage.cs">
       <SubType>Component</SubType>
     </Compile>
