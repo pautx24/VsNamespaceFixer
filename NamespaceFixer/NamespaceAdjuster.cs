@@ -77,8 +77,8 @@ namespace NamespaceFixer
 
                 foreach (var filePath in allPaths.ToList())
                 {
-                    var builder = NamespaceBuilderFactory.CreateNamespaceBuilderService(projectFile.Extension, _package.GetOptionPage());
-                    allPaths.ToList().ForEach(f => FixNamespace(builder, f, solutionFile, projectFile));
+                    var builder = NamespaceBuilderFactory.CreateNamespaceBuilderService(projectFile.Extension, _package.GetOptionPage(), filePath);
+                    FixNamespace(builder, filePath, solutionFile, projectFile);
                 }
             }
             finally

@@ -15,9 +15,9 @@ namespace NamespaceFixer.NamespaceBuilder
             {
                 switch (fileExtension)
                 {
-                    case "cs":
+                    case ".cs":
                         return new CsNamespaceBuilderService(options);
-                    case "xaml":
+                    case ".xaml":
                         return new XamlNamespaceBuilderService(options);
                     default:
                         throw new Exception($"Unsupported file extension '{fileExtension}'.");
