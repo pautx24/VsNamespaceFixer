@@ -10,8 +10,6 @@ namespace NamespaceFixer
 {
     internal sealed class NamespaceAdjuster
     {
-        private INamespaceBuilder _namespaceBuilder;
-
         private readonly NamespaceAdjusterPackage _package;
         private readonly VsServiceInfo _serviceInfo;
 
@@ -77,9 +75,11 @@ namespace NamespaceFixer
                 var solutionFile = _package.GetSolutionFile();
                 var projectFile = ProjectHelper.GetProjectFilePath(allPaths[0]);
 
-                _namespaceBuilder = NamespaceBuilderFactory.CreateNamespaceBuilderService(projectFile.Extension, _package.GetOptionPage());
-
-                allPaths.ToList().ForEach(f => FixNamespace(f, solutionFile, projectFile));
+                foreach (var filePath in allPaths.ToList())
+                {
+                    var builder = NamespaceBuilderFactory.CreateNamespaceBuilderService(projectFile.Extension, _package.GetOptionPage());
+                    allPaths.ToList().ForEach(f => FixNamespace(builder, f, solutionFile, projectFile));
+                }
             }
             finally
             {
@@ -87,7 +87,7 @@ namespace NamespaceFixer
             }
         }
 
-        private void FixNamespace(string filePath, FileInfo solutionFile, FileInfo projectFile)
+        private void FixNamespace(INamespaceBuilder namespaceBuilder, string filePath, FileInfo solutionFile, FileInfo projectFile)
         {
             if (!File.Exists(filePath) || IgnoreFile(filePath))
             {
@@ -98,9 +98,9 @@ namespace NamespaceFixer
 
             var fileContent = File.ReadAllText(filePath, encoding);
 
-            var desiredNamespace = _namespaceBuilder.GetNamespace(filePath, solutionFile, projectFile);
+            var desiredNamespace = namespaceBuilder.GetNamespace(filePath, solutionFile, projectFile);
 
-            var updated = _namespaceBuilder.UpdateFile(ref fileContent, desiredNamespace);
+            var updated = namespaceBuilder.UpdateFile(ref fileContent, desiredNamespace);
 
             if (updated)
             {
