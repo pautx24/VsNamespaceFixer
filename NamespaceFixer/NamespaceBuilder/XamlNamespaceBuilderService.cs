@@ -14,9 +14,14 @@ namespace NamespaceFixer.NamespaceBuilder
             _options = options;
         }
 
-        protected Match FindNamespaceMatch(string fileContent)
+        protected Match FindClassNameMatch(string fileContent)
         {
             return Regex.Match(fileContent, @"x:Class=""([a-zA-Z0-9_\.]+)\.[a-zA-Z0-9_]+""");
+        }
+
+        protected Match FindNamespaceMatch(string fileContent)
+        {
+            return Regex.Match(fileContent, @"xmlns:local=""clr-namespace:([a-zA-Z0-9_\.]+)""");
         }
 
         public string GetNamespace(string filePath, FileInfo solutionFile, FileInfo projectFile)
@@ -43,15 +48,18 @@ namespace NamespaceFixer.NamespaceBuilder
         {
             if (string.IsNullOrEmpty(desiredNamespace)) return false;
 
-            var namespaceMatch = FindNamespaceMatch(fileContent);
-
-            return namespaceMatch.Success ?
-                UpdateNamespace(ref fileContent, desiredNamespace, namespaceMatch) :
-                CreateNamespace(ref fileContent, desiredNamespace);
+            return 
+                UpdateClassName(ref fileContent, desiredNamespace) ||
+                UpdateNamespace(ref fileContent, desiredNamespace);
         }
 
-        private bool UpdateNamespace(ref string fileContent, string desiredNamespace, Match namespaceMatch)
+        private bool UpdateClassName(ref string fileContent, string desiredNamespace)
         {
+            var namespaceMatch = FindClassNameMatch(fileContent);
+
+            if (!namespaceMatch.Success)
+                return false;
+
             var fileRequiresUpdate = false;
 
             var namespaceGroup = namespaceMatch.Groups.OfType<Group>().Where(g => !(g is Match)).FirstOrDefault();
@@ -69,9 +77,28 @@ namespace NamespaceFixer.NamespaceBuilder
             return fileRequiresUpdate;
         }
 
-        private bool CreateNamespace(ref string fileContent, string desiredNamespace)
+        private bool UpdateNamespace(ref string fileContent, string desiredNamespace)
         {
-            return false;
+            var namespaceMatch = FindNamespaceMatch(fileContent);
+
+            if (!namespaceMatch.Success)
+                return false;
+
+            var fileRequiresUpdate = false;
+
+            var namespaceGroup = namespaceMatch.Groups.OfType<Group>().Where(g => !(g is Match)).FirstOrDefault();
+
+            if (namespaceGroup == null) return false;
+
+            var currentNamespace = namespaceGroup.Value.Trim();
+
+            if (currentNamespace != desiredNamespace)
+            {
+                fileRequiresUpdate = true;
+                fileContent = fileContent.Substring(0, namespaceGroup.Index) + desiredNamespace + fileContent.Substring(namespaceGroup.Index + namespaceGroup.Value.Trim().Length);
+            }
+
+            return fileRequiresUpdate;
         }
 
         private string GetRootNamespaceFromProject(FileInfo projectFile)
