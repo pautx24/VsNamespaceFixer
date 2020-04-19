@@ -16,6 +16,8 @@ namespace NamespaceFixer.Core
 
         public const string CsProjectFileExtension = "csproj";
         public const string VbProjectFileExtension = "vbproj";
+        public const string CsFileExtension = ".cs";
+        public const string XamlFileExtension = ".xaml";
     }
 
     /// <summary>

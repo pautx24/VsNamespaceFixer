@@ -61,6 +61,7 @@
     <Compile Include="Extensions\DirectoryExtensions.cs" />
     <Compile Include="Extensions\FileExtensions.cs" />
     <Compile Include="Core\MsBuildEvaluationHelper.cs" />
+    <Compile Include="NamespaceBuilder\LogicNamespaceBuilderService.cs" />
     <Compile Include="NamespaceBuilder\VbNamespaceBuilderService.cs" />
     <Compile Include="NamespaceBuilder\CsNamespaceBuilderService.cs" />
     <Compile Include="Core\PackageHelper.cs" />

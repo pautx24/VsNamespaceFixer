@@ -1,80 +1,50 @@
 ﻿using System;
-using System.IO;
-using System.IO.Extensions;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Xml;
 
 namespace NamespaceFixer.NamespaceBuilder
 {
-    internal class XamlNamespaceBuilderService : INamespaceBuilder
+    internal class XamlNamespaceBuilderService : NamespaceBuilderService
     {
-        public XamlNamespaceBuilderService(INamespaceAdjusterOptions options)
+        public XamlNamespaceBuilderService(INamespaceAdjusterOptions options) : base(options)
         {
-            _options = options;
         }
 
-        protected Match FindClassNameMatch(string fileContent)
-        {
-            return Regex.Match(fileContent, @"x:Class=""([a-zA-Z0-9_\.]+)\.[a-zA-Z0-9_]+""");
-        }
-
-        protected Match FindNamespaceMatch(string fileContent)
-        {
-            return Regex.Match(fileContent, @"xmlns:local=""clr-namespace:([a-zA-Z0-9_\.]+)""");
-        }
-
-        public string GetNamespace(string filePath, FileInfo solutionFile, FileInfo projectFile)
-        {
-            var solutionName = solutionFile.NameWithoutExtension();
-            var projectName = projectFile.NameWithoutExtension();
-            var projectRootNamespace = GetRootNamespaceFromProject(projectFile);
-            var projectToSolutionPhysicalPath = GetProjectToSolutionPhysicalPath(solutionFile, projectFile);
-            var projectToSolutionVirtualPath = string.Empty; // GetProjectToSolutionVirtualPath(solutionFile, projectFile);
-            var fileToProjectPath = GetFileToProjectPath(projectFile, filePath);
-
-            string result = BuildNamespaceAccordingToOptions(
-                solutionName,
-                projectName,
-                projectRootNamespace,
-                projectToSolutionPhysicalPath,
-                projectToSolutionVirtualPath,
-                fileToProjectPath);
-
-            return ToValidFormat(result);
-        }
-
-        public bool UpdateFile(ref string fileContent, string desiredNamespace)
+        public override bool UpdateFile(ref string fileContent, string desiredNamespace)
         {
             if (string.IsNullOrEmpty(desiredNamespace)) return false;
 
-            return 
+            return
                 UpdateClassName(ref fileContent, desiredNamespace) ||
                 UpdateNamespace(ref fileContent, desiredNamespace);
         }
 
-        private bool UpdateClassName(ref string fileContent, string desiredNamespace)
+        protected override Match FindNamespaceMatch(string fileContent) =>
+            Regex.Match(fileContent, @"xmlns:local=""clr-namespace:([a-zA-Z0-9_\.]+)""");
+
+        protected override string BuildNamespaceAccordingToOptions(
+          string solutionName,
+          string projectName,
+          string projectRootNamespace,
+          string projectToSolutionPhysicalPath,
+          string projectToSolutionVirtualPath,
+          string fileToProjectPath)
         {
-            var namespaceMatch = FindClassNameMatch(fileContent);
+            var newNamespace = GetOptions().NamespaceFormat;
 
-            if (!namespaceMatch.Success)
-                return false;
-
-            var fileRequiresUpdate = false;
-
-            var namespaceGroup = namespaceMatch.Groups.OfType<Group>().Where(g => !(g is Match)).FirstOrDefault();
-
-            if (namespaceGroup == null) return false;
-
-            var currentNamespace = namespaceGroup.Value.Trim();
-
-            if (currentNamespace != desiredNamespace)
+            Action<string, string> replaceWithFormat = (namespaceSection, sectionValue) =>
             {
-                fileRequiresUpdate = true;
-                fileContent = fileContent.Substring(0, namespaceGroup.Index) + desiredNamespace + fileContent.Substring(namespaceGroup.Index + namespaceGroup.Value.Trim().Length);
-            }
+                newNamespace = newNamespace.Replace(namespaceSection, "/" + sectionValue);
+            };
 
-            return fileRequiresUpdate;
+            replaceWithFormat(NamespaceSections.SolutionName, solutionName);
+            replaceWithFormat(NamespaceSections.ProjectName, projectName);
+            replaceWithFormat(NamespaceSections.ProjectRootNamespace, projectRootNamespace);
+            replaceWithFormat(NamespaceSections.ProjectToSolutionPhysicalPath, projectToSolutionPhysicalPath);
+            replaceWithFormat(NamespaceSections.ProjectToSolutionVirtualPath, projectToSolutionVirtualPath);
+            replaceWithFormat(NamespaceSections.FileToProjectPath, fileToProjectPath);
+
+            return newNamespace;
         }
 
         private bool UpdateNamespace(ref string fileContent, string desiredNamespace)
@@ -101,91 +71,31 @@ namespace NamespaceFixer.NamespaceBuilder
             return fileRequiresUpdate;
         }
 
-        private string GetRootNamespaceFromProject(FileInfo projectFile)
-        {
-            using (var reader = BuildXmlProjectFileReader(projectFile))
-            {
-                while (reader.Read())
-                {
-                    if (reader.NodeType == XmlNodeType.Element && reader.Name == "RootNamespace")
-                    {
-                        reader.Read();
+        private Match FindClassNameMatch(string fileContent) =>
+            Regex.Match(fileContent, @"x:Class=""([a-zA-Z0-9_\.]+)\.[a-zA-Z0-9_]+""");
 
-                        return reader.NodeType == XmlNodeType.Text ? reader.Value : null;
-                    }
-                }
+        private bool UpdateClassName(ref string fileContent, string desiredNamespace)
+        {
+            var namespaceMatch = FindClassNameMatch(fileContent);
+
+            if (!namespaceMatch.Success)
+                return false;
+
+            var fileRequiresUpdate = false;
+
+            var namespaceGroup = namespaceMatch.Groups.OfType<Group>().Where(g => !(g is Match)).FirstOrDefault();
+
+            if (namespaceGroup == null) return false;
+
+            var currentNamespace = namespaceGroup.Value.Trim();
+
+            if (currentNamespace != desiredNamespace)
+            {
+                fileRequiresUpdate = true;
+                fileContent = fileContent.Substring(0, namespaceGroup.Index) + desiredNamespace + fileContent.Substring(namespaceGroup.Index + namespaceGroup.Value.Trim().Length);
             }
-            return Path.GetFileNameWithoutExtension(projectFile.FullName);
-        }
 
-        private XmlReader BuildXmlProjectFileReader(FileInfo projectFile)
-        {
-            XmlReaderSettings settings = new XmlReaderSettings();
-            settings.DtdProcessing = DtdProcessing.Parse;
-            return XmlReader.Create(projectFile.FullName, settings);
-        }
-
-        private string GetFileToProjectPath(FileInfo projectFile, string filePath)
-        {
-            return Directory.GetParent(filePath).FullName.Substring(projectFile.Directory.FullName.Length);
-        }
-
-        private string GetProjectToSolutionPhysicalPath(FileInfo solutionFile, FileInfo projectFile)
-        {
-            string solutionDirectoryFullName = solutionFile.Directory.FullName;
-            string projectDirectoryFullName = projectFile.Directory.FullName;
-
-            if (!projectDirectoryFullName.StartsWith(solutionDirectoryFullName))
-                return string.Empty;
-
-            var projectAndSolutionFilesAreSameDirectory = projectDirectoryFullName.Equals(solutionDirectoryFullName);
-            if (projectAndSolutionFilesAreSameDirectory)
-                return string.Empty;
-
-            return projectDirectoryFullName.Substring(solutionDirectoryFullName.Length + 1);
-        }
-
-        private string ToValidFormat(string name)
-        {
-            return name
-                .Replace(' ', '_')
-                .Replace('-', '_')
-                .Replace("\\", "/")
-                .Replace('/', '.')
-                .Replace("..", ".")
-                .Trim('.');
-        }
-
-        protected string BuildNamespaceAccordingToOptions(
-          string solutionName,
-          string projectName,
-          string projectRootNamespace,
-          string projectToSolutionPhysicalPath,
-          string projectToSolutionVirtualPath,
-          string fileToProjectPath)
-        {
-            var newNamespace = GetOptions().NamespaceFormat;
-
-            Action<string, string> replaceWithFormat = (namespaceSection, sectionValue) =>
-            {
-                newNamespace = newNamespace.Replace(namespaceSection, "/" + sectionValue);
-            };
-
-            replaceWithFormat(NamespaceSections.SolutionName, solutionName);
-            replaceWithFormat(NamespaceSections.ProjectName, projectName);
-            replaceWithFormat(NamespaceSections.ProjectRootNamespace, projectRootNamespace);
-            replaceWithFormat(NamespaceSections.ProjectToSolutionPhysicalPath, projectToSolutionPhysicalPath);
-            replaceWithFormat(NamespaceSections.ProjectToSolutionVirtualPath, projectToSolutionVirtualPath);
-            replaceWithFormat(NamespaceSections.FileToProjectPath, fileToProjectPath);
-
-            return newNamespace;
-        }
-
-        private readonly INamespaceAdjusterOptions _options;
-
-        internal INamespaceAdjusterOptions GetOptions()
-        {
-            return _options;
+            return fileRequiresUpdate;
         }
     }
 }

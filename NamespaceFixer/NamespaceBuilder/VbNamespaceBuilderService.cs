@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace NamespaceFixer.NamespaceBuilder
 {
-    internal class VbNamespaceBuilderService : NamespaceBuilderService
+    internal class VbNamespaceBuilderService : LogicNamespaceBuilderService
     {
         protected override string NamespaceStartLimiter => string.Empty;
         protected override string NamespaceEndLimiter => "End Namespace";
@@ -12,23 +12,16 @@ namespace NamespaceFixer.NamespaceBuilder
         {
         }
 
-        protected override Match FindNamespaceMatch(string fileContent)
-        {
-            return Regex.Match(fileContent, @"[\r\n|\r|\n]?Namespace\s(.+)[\r\n|\r|\n]");
-        }
+        protected override Match FindNamespaceMatch(string fileContent) => Regex.Match(fileContent, @"[\r\n|\r|\n]?Namespace\s(.+)[\r\n|\r|\n]");
 
-        protected override MatchCollection FindUsingMatches(string fileContent)
-        {
-            return Regex.Matches(fileContent, @"[\r\n|\r|\n]?Imports\s(.+)[\r\n|\r|\n]");
-        }
+        protected override MatchCollection FindUsingMatches(string fileContent) => 
+            Regex.Matches(fileContent, @"[\r\n|\r|\n]?Imports\s(.+)[\r\n|\r|\n]");
 
-        protected override string BuildNamespaceLine(string desiredNamespace)
-        {
-            return "Namespace " + desiredNamespace;
-        }
+        protected override string BuildNamespaceLine(string desiredNamespace) =>
+            "Namespace " + desiredNamespace;
 
 
-        internal override string BuildNamespaceAccordingToOptions(
+        protected override string BuildNamespaceAccordingToOptions(
             string solutionName,
             string projectName,
             string projectRootNamespace,

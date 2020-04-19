@@ -11,27 +11,26 @@ namespace NamespaceFixer.NamespaceBuilder
             string projectName = ProjectHelper.GetProjectExtensionName(extension);
             string fileExtension = Path.GetExtension(filePath);
 
-            if(projectName == Statics.CsProjectFileExtension)
+            if (projectName == Statics.CsProjectFileExtension)
             {
                 switch (fileExtension)
                 {
-                    case ".cs":
+                    case Statics.CsFileExtension:
                         return new CsNamespaceBuilderService(options);
-                    case ".xaml":
+
+                    case Statics.XamlFileExtension:
                         return new XamlNamespaceBuilderService(options);
+
                     default:
                         throw new Exception($"Unsupported file extension '{fileExtension}'.");
                 }
             }
-            else if(projectName == Statics.VbProjectFileExtension)
+            else if (projectName == Statics.VbProjectFileExtension)
             {
                 return new VbNamespaceBuilderService(options);
             }
-            else
-            {
-                throw new Exception($"Unsupported project file '{projectName}'.");
-            }
-        }
 
+            throw new Exception($"Unsupported project file '{projectName}'.");
+        }
     }
 }
