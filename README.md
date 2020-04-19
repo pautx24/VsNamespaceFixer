@@ -30,3 +30,5 @@ Special thanks go to the pull-requesters:
 * [@mniak](https://github.com/mniak)
 * [@DawidB](https://github.com/DawidB)
 * [@angelobreuer](https://github.com/angelobreuer)
+* [@aquilla12](https://github.com/aquilla12)
+* [@Aviuz](https://github.com/Aviuz)
