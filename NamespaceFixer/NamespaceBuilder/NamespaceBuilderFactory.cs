@@ -1,32 +1,36 @@
 using NamespaceFixer.Core;
 using System;
+using System.IO;
 
 namespace NamespaceFixer.NamespaceBuilder
 {
     internal class NamespaceBuilderFactory
     {
-        internal static INamespaceBuilder CreateNamespaceBuilderService(string extension, INamespaceAdjusterOptions options)
+        internal static INamespaceBuilder CreateNamespaceBuilderService(string extension, INamespaceAdjusterOptions options, string filePath)
         {
-            INamespaceBuilder rslt = null;
             string projectName = ProjectHelper.GetProjectExtensionName(extension);
+            string fileExtension = Path.GetExtension(filePath);
 
-            switch (projectName)
+            if(projectName == Statics.CsProjectFileExtension)
             {
-                case Statics.CsProjectFileExtension:
-                    rslt = new CsNamespaceBuilderService(options);
-                    break;
-
-                case Statics.VbProjectFileExtension:
-                    rslt = new VbNamespaceBuilderService(options);
-                    break;
+                switch (fileExtension)
+                {
+                    case ".cs":
+                        return new CsNamespaceBuilderService(options);
+                    case ".xaml":
+                        return new XamlNamespaceBuilderService(options);
+                    default:
+                        throw new Exception($"Unsupported file extension '{fileExtension}'.");
+                }
             }
-
-            if (rslt is null)
+            else if(projectName == Statics.VbProjectFileExtension)
+            {
+                return new VbNamespaceBuilderService(options);
+            }
+            else
             {
                 throw new Exception($"Unsupported project file '{projectName}'.");
             }
-
-            return rslt;
         }
 
     }
