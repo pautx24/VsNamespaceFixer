@@ -1,7 +1,7 @@
 # Visual Studio Namespace Fixer
 An very simple and light extension, compatible with VS 2015, VS 2017 & VS 2019.
 
-It only works for C#-like and VB.NET namespace format.
+It works for C#-like and VB.NET namespace format. Now it supports XAML files as well!
 
 Adds an 'Adjust namespace' option on your Solution Explorer contextual menu. It will only appear for files (one or more) and folders (one or more) for the same project. Just right-click them and you will see how it works.
 
