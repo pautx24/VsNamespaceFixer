@@ -19,7 +19,7 @@ The sections that can be used are:
     • " + NamespaceSections.FileToProjectPath + @": the physical path from the file adjusting the path of to the project directory.
 ")]
         public string NamespaceFormat { get; set; } =
-            NamespaceSections.ProjectName +
+            NamespaceSections.ProjectRootNamespace +
             NamespaceSections.FileToProjectPath;
 
         [Category("Options")]
