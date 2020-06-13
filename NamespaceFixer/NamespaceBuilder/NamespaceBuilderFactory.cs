@@ -20,9 +20,6 @@ namespace NamespaceFixer.NamespaceBuilder
 
                     case Statics.XamlFileExtension:
                         return new XamlNamespaceBuilderService(options);
-
-                    default:
-                        throw new Exception($"Unsupported file extension '{fileExtension}'.");
                 }
             }
             else if (projectName == Statics.VbProjectFileExtension)
@@ -30,7 +27,7 @@ namespace NamespaceFixer.NamespaceBuilder
                 return new VbNamespaceBuilderService(options);
             }
 
-            throw new Exception($"Unsupported project file '{projectName}'.");
+            return new DummyNamespaceBuilderService();
         }
     }
 }
