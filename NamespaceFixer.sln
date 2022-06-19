@@ -5,7 +5,13 @@ VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NamespaceFixer", "src\NamespaceFixer\NamespaceFixer.csproj", "{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "NamespaceFixer.Shared", "src\NamespaceFixer.Shared\NamespaceFixer.Shared.shproj", "{33E08BCC-4BAB-48A0-865D-D025DDA3CB54}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\NamespaceFixer.Shared\NamespaceFixer.Shared.projitems*{33e08bcc-4bab-48a0-865d-d025dda3cb54}*SharedItemsImports = 13
+		src\NamespaceFixer.Shared\NamespaceFixer.Shared.projitems*{6c5d3ae5-03e4-4af8-a02d-b15985e46101}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
