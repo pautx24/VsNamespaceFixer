@@ -163,9 +163,15 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\PackageIcon.ico" />
-    <Content Include="Resources\PackageLogo_128.png" />
-    <Content Include="Resources\PackageLogo_16.png" />
+    <Content Include="..\NamespaceFixer.Shared\SharedItems\Resources\PackageIcon.ico">
+      <Link>Resources\PackageIcon.ico</Link>
+    </Content>
+    <Content Include="..\NamespaceFixer.Shared\SharedItems\Resources\PackageLogo_128.png">
+      <Link>Resources\PackageLogo_128.png</Link>
+    </Content>
+    <Content Include="..\NamespaceFixer.Shared\SharedItems\Resources\PackageLogo_16.png">
+      <Link>Resources\PackageLogo_16.png</Link>
+    </Content>
   </ItemGroup>
   <Import Project="..\NamespaceFixer.Shared\NamespaceFixer.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
