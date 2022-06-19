@@ -4,7 +4,7 @@
                  xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
         <Identity Id="pch9d11e-9ed1-48f6-875b-4d144a5d790c"
-                  Version="2.8"
+                  Version="3.0"
                   Language="en-US"
                   Publisher="pcerv" />
         <DisplayName>NamespaceFixer</DisplayName>

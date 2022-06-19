@@ -8,7 +8,6 @@ namespace NamespaceFixer.Core
 {
     internal class VsItemInfo
     {
-
         private readonly IVsHierarchy _VsHierarchy;
 
         private string _Name = null;

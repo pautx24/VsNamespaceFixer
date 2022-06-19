@@ -1,25 +1,53 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30011.22
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NamespaceFixer", "NamespaceFixer\NamespaceFixer.csproj", "{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "NamespaceFixer.Shared", "src\NamespaceFixer.Shared\NamespaceFixer.Shared.shproj", "{33E08BCC-4BAB-48A0-865D-D025DDA3CB54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NamespaceFixer.2019", "src\NamespaceFixer.2019\NamespaceFixer.2019.csproj", "{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NamespaceFixer.2022", "src\NamespaceFixer.2022\NamespaceFixer.2022.csproj", "{41B427B3-64E9-4635-B0EE-211476987CFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}.Debug|Any CPU.Build.0 = Debug|x86
+		{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}.Debug|x64.ActiveCfg = Debug|x86
+		{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}.Debug|x86.ActiveCfg = Debug|x86
+		{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}.Debug|x86.Build.0 = Debug|x86
+		{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}.Release|Any CPU.ActiveCfg = Release|x86
+		{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}.Release|x64.ActiveCfg = Release|x86
+		{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}.Release|x64.Build.0 = Release|x86
+		{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}.Release|x86.ActiveCfg = Release|x86
+		{6C5D3AE5-03E4-4AF8-A02D-B15985E46101}.Release|x86.Build.0 = Release|x86
+		{41B427B3-64E9-4635-B0EE-211476987CFF}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{41B427B3-64E9-4635-B0EE-211476987CFF}.Debug|Any CPU.Build.0 = Debug|x64
+		{41B427B3-64E9-4635-B0EE-211476987CFF}.Debug|x64.ActiveCfg = Debug|x64
+		{41B427B3-64E9-4635-B0EE-211476987CFF}.Debug|x64.Build.0 = Debug|x64
+		{41B427B3-64E9-4635-B0EE-211476987CFF}.Debug|x86.ActiveCfg = Debug|x64
+		{41B427B3-64E9-4635-B0EE-211476987CFF}.Release|Any CPU.ActiveCfg = Release|x64
+		{41B427B3-64E9-4635-B0EE-211476987CFF}.Release|x64.ActiveCfg = Release|x64
+		{41B427B3-64E9-4635-B0EE-211476987CFF}.Release|x64.Build.0 = Release|x64
+		{41B427B3-64E9-4635-B0EE-211476987CFF}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7E7806F8-9F8E-4AC8-BC2A-6F1DB4A3FA63}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\NamespaceFixer.Shared\NamespaceFixer.Shared.projitems*{33e08bcc-4bab-48a0-865d-d025dda3cb54}*SharedItemsImports = 13
+		src\NamespaceFixer.Shared\NamespaceFixer.Shared.projitems*{41b427b3-64e9-4635-b0ee-211476987cff}*SharedItemsImports = 4
+		src\NamespaceFixer.Shared\NamespaceFixer.Shared.projitems*{6c5d3ae5-03e4-4af8-a02d-b15985e46101}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal

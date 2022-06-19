@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.Shell;
 using System;
 using System.IO;
 using System.IO.Extensions;
@@ -8,7 +7,6 @@ namespace NamespaceFixer.Core
 {
     internal class ProjectHelper
     {
-
         public static bool IsValidProjectExtension(string extensionName)
         {
             string projectName = GetProjectExtensionName(extensionName);

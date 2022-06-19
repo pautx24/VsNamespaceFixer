@@ -14,8 +14,14 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <PropertyGroup>
+  <PropertyGroup>    
     <ApplicationIcon>Resources\PackageIcon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -39,53 +45,11 @@
     <StartProgram Condition="'$(DevEnvDir)' != ''">$(DevEnvDir)devenv.exe</StartProgram>
     <StartArguments>/rootsuffix Exp</StartArguments>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Core\VsServiceInfo.cs" />
-    <Compile Include="Extensions\DirectoryExtensions.cs" />
-    <Compile Include="Extensions\FileExtensions.cs" />
-    <Compile Include="Core\MsBuildEvaluationHelper.cs" />
-    <Compile Include="NamespaceBuilder\DummyNamespaceBuilderService.cs" />
-    <Compile Include="NamespaceBuilder\LogicNamespaceBuilderService.cs" />
-    <Compile Include="NamespaceBuilder\VbNamespaceBuilderService.cs" />
-    <Compile Include="NamespaceBuilder\CsNamespaceBuilderService.cs" />
-    <Compile Include="Core\PackageHelper.cs" />
-    <Compile Include="NamespaceBuilder\NamespaceBuilderFactory.cs" />
-    <Compile Include="InnerPathFinder\IInnerPathFinder.cs" />
-    <Compile Include="InnerPathFinder\InnerPathFinderService.cs" />
-    <Compile Include="Extensions\PathExtensions.cs" />
-    <Compile Include="NamespaceAdjuster.cs" />
-    <Compile Include="INamespaceAdjusterOptions.cs" />
-    <Compile Include="NamespaceAdjusterPackage.cs" />
-    <Compile Include="NamespaceBuilder\INamespaceBuilder.cs" />
-    <Compile Include="NamespaceBuilder\NamespaceBuilderService.cs" />
-    <Compile Include="NamespaceBuilder\NamespaceSections.cs" />
-    <Compile Include="NamespaceBuilder\XamlNamespaceBuilderService.cs" />
-    <Compile Include="OptionPage.cs">
-      <SubType>Component</SubType>
+    <Compile Include="..\NamespaceFixer.Shared\SharedItems\NamespaceAdjusterPackage.cs">
+      <Link>NamespaceAdjusterPackage.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SolutionSelection\ISolutionSelectionService.cs" />
-    <Compile Include="SolutionSelection\SolutionSelectionService.cs" />
-    <Compile Include="Core\ProjectHelper.cs" />
-    <Compile Include="Core\Statics.cs" />
-    <Compile Include="Core\VsItemInfo.cs" />
     <Compile Include="VSPackage.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -112,12 +76,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
-    <VSCTCompile Include="NamespaceAdjusterPackage.vsct">
-      <ResourceName>Menus.ctmenu</ResourceName>
-      <SubType>Designer</SubType>
-    </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="VSPackage.resx">
@@ -155,8 +113,11 @@
     <PackageReference Include="Microsoft.VisualStudio.Imaging">
       <Version>16.1.28917.181</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.SDK.EmbedInteropTypes">
-      <Version>15.0.27</Version>
+    <PackageReference Include="Microsoft.VisualStudio.SDK">
+      <Version>16.10.31321.278</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.TextManager.Interop">
+      <Version>7.10.6071</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Shell.14.0">
       <Version>14.3.25407</Version>
@@ -166,9 +127,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.12.0">
       <Version>12.0.30111</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.TextManager.Interop">
-      <Version>7.10.6071</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Threading">
       <Version>16.0.102</Version>
@@ -186,17 +144,26 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\PackageIcon.ico" />
+    <VSCTCompile Include="..\NamespaceFixer.Shared\SharedItems\NamespaceAdjusterPackage.vsct">
+      <Link>NamespaceAdjusterPackage.vsct</Link>
+      <ResourceName>Menus.ctmenu</ResourceName>
+      <SubType>Designer</SubType>
+    </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\PackageLogo_16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\PackageLogo_128.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="..\NamespaceFixer.Shared\SharedItems\Resources\PackageIcon.ico">
+      <Link>Resources\PackageIcon.ico</Link>
+    </Content>
+    <Content Include="..\NamespaceFixer.Shared\SharedItems\Resources\PackageLogo_128.png">
+      <Link>Resources\PackageLogo_128.png</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\NamespaceFixer.Shared\SharedItems\Resources\PackageLogo_16.png">
+      <Link>Resources\PackageLogo_16.png</Link>
     </Content>
   </ItemGroup>
+  <Import Project="..\NamespaceFixer.Shared\NamespaceFixer.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
