@@ -58,9 +58,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\NamespaceFixer.Shared\SharedItems\NamespaceAdjuster.cs">
-      <Link>NamespaceAdjuster.cs</Link>
-    </Compile>
     <Compile Include="..\NamespaceFixer.Shared\SharedItems\NamespaceAdjusterPackage.cs">
       <Link>NamespaceAdjusterPackage.cs</Link>
     </Compile>
@@ -164,6 +161,11 @@
       <ResourceName>Menus.ctmenu</ResourceName>
       <SubType>Designer</SubType>
     </VSCTCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\PackageIcon.ico" />
+    <Content Include="Resources\PackageLogo_128.png" />
+    <Content Include="Resources\PackageLogo_16.png" />
   </ItemGroup>
   <Import Project="..\NamespaceFixer.Shared\NamespaceFixer.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

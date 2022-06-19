@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)INamespaceAdjusterOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InnerPathFinder\IInnerPathFinder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InnerPathFinder\InnerPathFinderService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NamespaceAdjuster.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\CsNamespaceBuilderService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\DummyNamespaceBuilderService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\INamespaceBuilder.cs" />
