@@ -30,6 +30,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\NamespaceSections.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\VbNamespaceBuilderService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\XamlNamespaceBuilderService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OptionPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)SolutionSelection\ISolutionSelectionService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SolutionSelection\SolutionSelectionService.cs" />
   </ItemGroup>

@@ -15,7 +15,8 @@
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\PackageIcon.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -57,10 +58,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="NamespaceAdjuster.cs" />
-    <Compile Include="NamespaceAdjusterPackage.cs" />
-    <Compile Include="OptionPage.cs">
-      <SubType>Component</SubType>
+    <Compile Include="..\NamespaceFixer.Shared\SharedItems\NamespaceAdjuster.cs">
+      <Link>NamespaceAdjuster.cs</Link>
+    </Compile>
+    <Compile Include="..\NamespaceFixer.Shared\SharedItems\NamespaceAdjusterPackage.cs">
+      <Link>NamespaceAdjusterPackage.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VSPackage.Designer.cs">
@@ -89,12 +91,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
-    <VSCTCompile Include="NamespaceAdjusterPackage.vsct">
-      <ResourceName>Menus.ctmenu</ResourceName>
-      <SubType>Designer</SubType>
-    </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="VSPackage.resx">
@@ -163,16 +159,11 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\PackageIcon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\PackageLogo_16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\PackageLogo_128.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <VSCTCompile Include="..\NamespaceFixer.Shared\SharedItems\NamespaceAdjusterPackage.vsct">
+      <Link>NamespaceAdjusterPackage.vsct</Link>
+      <ResourceName>Menus.ctmenu</ResourceName>
+      <SubType>Designer</SubType>
+    </VSCTCompile>
   </ItemGroup>
   <Import Project="..\NamespaceFixer.Shared\NamespaceFixer.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
