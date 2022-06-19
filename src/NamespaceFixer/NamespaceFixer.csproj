@@ -57,35 +57,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Core\VsServiceInfo.cs" />
-    <Compile Include="Extensions\DirectoryExtensions.cs" />
-    <Compile Include="Extensions\FileExtensions.cs" />
-    <Compile Include="Core\MsBuildEvaluationHelper.cs" />
-    <Compile Include="NamespaceBuilder\DummyNamespaceBuilderService.cs" />
-    <Compile Include="NamespaceBuilder\LogicNamespaceBuilderService.cs" />
-    <Compile Include="NamespaceBuilder\VbNamespaceBuilderService.cs" />
-    <Compile Include="NamespaceBuilder\CsNamespaceBuilderService.cs" />
-    <Compile Include="Core\PackageHelper.cs" />
-    <Compile Include="NamespaceBuilder\NamespaceBuilderFactory.cs" />
-    <Compile Include="InnerPathFinder\IInnerPathFinder.cs" />
-    <Compile Include="InnerPathFinder\InnerPathFinderService.cs" />
-    <Compile Include="Extensions\PathExtensions.cs" />
     <Compile Include="NamespaceAdjuster.cs" />
-    <Compile Include="INamespaceAdjusterOptions.cs" />
     <Compile Include="NamespaceAdjusterPackage.cs" />
-    <Compile Include="NamespaceBuilder\INamespaceBuilder.cs" />
-    <Compile Include="NamespaceBuilder\NamespaceBuilderService.cs" />
-    <Compile Include="NamespaceBuilder\NamespaceSections.cs" />
-    <Compile Include="NamespaceBuilder\XamlNamespaceBuilderService.cs" />
     <Compile Include="OptionPage.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SolutionSelection\ISolutionSelectionService.cs" />
-    <Compile Include="SolutionSelection\SolutionSelectionService.cs" />
-    <Compile Include="Core\ProjectHelper.cs" />
-    <Compile Include="Core\Statics.cs" />
-    <Compile Include="Core\VsItemInfo.cs" />
     <Compile Include="VSPackage.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

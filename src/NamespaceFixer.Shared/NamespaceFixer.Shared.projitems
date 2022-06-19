@@ -9,5 +9,28 @@
     <Import_RootNamespace>NamespaceFixer.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Core\MsBuildEvaluationHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\PackageHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\ProjectHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Statics.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\VsItemInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\VsServiceInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DirectoryExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\FileExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\PathExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)INamespaceAdjusterOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InnerPathFinder\IInnerPathFinder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InnerPathFinder\InnerPathFinderService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\CsNamespaceBuilderService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\DummyNamespaceBuilderService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\INamespaceBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\LogicNamespaceBuilderService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\NamespaceBuilderFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\NamespaceBuilderService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\NamespaceSections.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\VbNamespaceBuilderService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\XamlNamespaceBuilderService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SolutionSelection\ISolutionSelectionService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SolutionSelection\SolutionSelectionService.cs" />
   </ItemGroup>
 </Project>
