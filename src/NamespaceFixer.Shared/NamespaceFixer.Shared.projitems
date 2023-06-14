@@ -22,7 +22,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)InnerPathFinder\IInnerPathFinder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InnerPathFinder\InnerPathFinderService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NamespaceAdjuster.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\CsNamespaceBuilderService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\CsNamespaceBuilders\CsCurlyBracketNamespaceBuilderService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\CsNamespaceBuilders\CsInlineNamespaceBuilderService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\CsNamespaceBuilders\CsNamespaceBuilderService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\CsNamespaceBuilders\CsNamespaceTypeBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\DummyNamespaceBuilderService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\INamespaceBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NamespaceBuilder\LogicNamespaceBuilderService.cs" />

@@ -1,22 +1,29 @@
-﻿using System;
+﻿using NamespaceFixer.Shared.NamespaceBuilder.CsNamespaceBuilders;
+using System;
 using System.Text.RegularExpressions;
 
 namespace NamespaceFixer.NamespaceBuilder
 {
     internal class CsNamespaceBuilderService : LogicNamespaceBuilderService
     {
-        protected override string NamespaceStartLimiter => "{" + NewLine;
-        protected override string NamespaceEndLimiter => "}";
+        private ICsNamespaceTypeBuilder SpecificNamespaceBuilder;
+
+        protected override string NamespaceStartLimiter => SpecificNamespaceBuilder.NamespaceStartLimiter;
+        protected override string NamespaceEndLimiter => SpecificNamespaceBuilder.NamespaceEndLimiter;
 
         public CsNamespaceBuilderService(INamespaceAdjusterOptions options) : base(options)
         {
         }
 
-        protected override Match FindNamespaceMatch(string fileContent) => 
-            Regex.Match(fileContent, @"[\r\n|\r|\n]?namespace\s(.+)[\r\n|\r|\n]*{");
-        
+        protected override Match FindNamespaceMatch(string fileContent)
+        {
+            if (CsInlineNamespaceBuilderService.IsInlineNamespace(fileContent)) SpecificNamespaceBuilder = new CsInlineNamespaceBuilderService();
+            else SpecificNamespaceBuilder = new CsCurlyBracketNamespaceBuilderService(NewLine);
 
-        protected override MatchCollection FindUsingMatches(string fileContent) => 
+            return SpecificNamespaceBuilder.FindNamespaceMatch(fileContent);
+        }
+
+        protected override MatchCollection FindUsingMatches(string fileContent) =>
             Regex.Matches(fileContent, @"\n?using\s(.+);");
 
         protected override string BuildNamespaceLine(string desiredNamespace) => "namespace " + desiredNamespace;

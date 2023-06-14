@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" ?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="NamespaceFixer.VS2022" Version="1.0" Language="en-US" Publisher="p2410" />
+        <Identity Id="NamespaceFixer.VS2022" Version="1.1" Language="en-US" Publisher="p2410" />
         <DisplayName>NamespaceFixer</DisplayName>
         <Description xml:space="preserve">VS Extension to fix namespaces following C# and VB.NET convention</Description>
         <Icon>Resources\PackageLogo_128.png</Icon>
