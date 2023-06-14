@@ -20,7 +20,7 @@ namespace NamespaceFixer.NamespaceBuilder
         {
             if (string.IsNullOrEmpty(desiredNamespace)) return false;
 
-            SetNewLine(fileContent);
+            SetNewLineCharacter(fileContent);
 
             var namespaceMatch = FindNamespaceMatch(fileContent);
 
@@ -33,7 +33,7 @@ namespace NamespaceFixer.NamespaceBuilder
 
         protected abstract string BuildNamespaceLine(string desiredNamespace);
 
-        private void SetNewLine(string fileContent)
+        private void SetNewLineCharacter(string fileContent)
         {
             var isCrlf = fileContent.IndexOf("\r\n") > -1;
 
